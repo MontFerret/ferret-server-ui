@@ -5,7 +5,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { RestLink } from 'apollo-link-rest';
 
 const restLink = new RestLink({
-    uri: '/'
+    uri: '/api'
 });
 
 const authLink = setContext((_, { headers }) => {
