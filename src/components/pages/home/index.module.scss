@@ -1,0 +1,24 @@
+.layout {
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: inline;
+    color: white;
+    text-transform: none;
+    outline: none;
+    font-size: 18px;
+}
+
+.logoutBtn {
+    /* float: right;
+    vertical-align: unset;
+    top: 15px; */
+}
