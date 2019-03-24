@@ -1,4 +1,4 @@
-import { Order } from 'common/models/query/order';
+import { Order } from './order';
 
 export interface SortingItem {
     name: string;

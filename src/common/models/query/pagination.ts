@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import qs from 'query-string';
+import qs from 'qs';
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_SIZE = 10;

@@ -24,12 +24,6 @@
         "ignore-comments"
       ],
       "no-unused-expression": true,
-      "no-unused-variable": [
-        true,
-        {
-          "ignore-pattern": "^_"
-        }
-      ],
       "object-literal-sort-keys": false,
       "ordered-imports": [
         true,

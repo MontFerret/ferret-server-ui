@@ -36,7 +36,7 @@ export interface Props<T extends Entity> {
     columns: Array<Column<T>>;
     pageNum: number;
     pageSize: number;
-    data: T[];
+    data?: T[];
     fetch: (query: Query) => void;
     onChange?: (selected: string[]) => void;
     onCreate?: () => void;
@@ -47,7 +47,7 @@ interface State {
     selectedRows: string[];
 }
 
-export default class DataTable extends React.PureComponent<Props<any>, State> {
+export class DataTable extends React.PureComponent<Props<any>, State> {
     private readonly __handleRowSelection: any;
 
     constructor(props: Props<any>) {

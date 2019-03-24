@@ -1,8 +1,8 @@
 import { Card, Col, Form, Row, Spin } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import ActionPanel, { Action } from '../action-panel/panel';
 import React from 'react';
+import ActionPanel, { Action } from '../action-panel/panel';
 const css = require('./container.module.css');
 
 const ACTIONS_VIEW: Action[] = [
@@ -106,30 +106,6 @@ class FormContainer extends React.Component<InnerProps, State> {
         };
     }
 
-    private __renderForm(): any {
-        const {
-            data,
-            form,
-        } = this.props;
-        const {
-            mode,
-        } = this.state;
-
-        return (
-            <Form
-                onSubmit={this.__handleSubmit}
-            >
-                {
-                    this.props.render(
-                        mode,
-                        form,
-                        data,
-                    )
-                }
-            </Form>
-        );
-    }
-
     public render(): any {
         const {
             title,
@@ -165,6 +141,30 @@ class FormContainer extends React.Component<InnerProps, State> {
                 </Row>
             </Card>
         </Spin>
+        );
+    }
+
+    private __renderForm(): any {
+        const {
+            data,
+            form,
+        } = this.props;
+        const {
+            mode,
+        } = this.state;
+
+        return (
+            <Form
+                onSubmit={this.__handleSubmit}
+            >
+                {
+                    this.props.render(
+                        mode,
+                        form,
+                        data,
+                    )
+                }
+            </Form>
         );
     }
 }
