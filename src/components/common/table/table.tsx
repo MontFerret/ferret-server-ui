@@ -8,8 +8,8 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import { Entity } from '../../../common/models/entity';
+import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
-import { Query } from '../../../common/models/query/query';
 import Panel, { Action } from '../table/panel';
 
 const ITEMS_UNSELECTED: Action[] = [
@@ -31,13 +31,13 @@ const ITEMS_SELECTED: Action[] = [
 export type Column<T> = ColumnProps<T>;
 
 export interface Props<T extends Entity> {
-    loading: boolean;
+    loading?: boolean;
     // tslint:disable-next-line:prefer-array-literal
     columns: Array<Column<T>>;
     pageNum: number;
     pageSize: number;
     data?: T[];
-    fetch: (query: Query) => void;
+    fetch: LoadMoreHandler;
     onChange?: (selected: string[]) => void;
     onCreate?: () => void;
     onDelete?: (selected: string[]) => void;

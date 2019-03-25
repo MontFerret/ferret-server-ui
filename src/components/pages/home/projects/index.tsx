@@ -1,15 +1,18 @@
+import { Button, Layout } from 'antd';
 import gq from 'graphql-tag';
 import isArray from 'lodash/isArray';
-import partial from 'lodash/partial';
 import React from 'react';
 import { Query, QueryResult } from 'react-apollo';
 import { Link } from 'react-router-dom';
+import { LoadMoreHandler } from '../../../../common/models/query/loader';
 import { fromQuery } from '../../../../common/models/query/pagination';
 import { Query as UrlQuery } from '../../../../common/models/query/query';
 import { ProjectOutput } from '../../../../models/api/model/projectOutput';
 import { Page, PageProps } from '../../../common/page';
-import { Column, DataTable } from '../../../common/table/table';
+import List from './list';
+const css = require('./index.module.scss');
 
+const { Header, Content } = Layout;
 const findQuery = gq`
     query findProjects {
         projects @rest(type: "Project", path: "/projects") {
@@ -22,15 +25,9 @@ const findQuery = gq`
     }
 `;
 
-interface QueryResultProjects {
+interface QueryResultData {
     projects: ProjectOutput[];
 }
-
-const LinkToDetails = (
-    url: string,
-    text: string,
-    record: ProjectOutput,
-) => <Link to={`${url}/${record.id}`}>{text}</Link>;
 
 interface QueryVariables {
     criteria: UrlQuery;
@@ -50,37 +47,14 @@ export default class ProjectsIndexPage extends Page<Params, Props> {
         };
     }
 
-    private readonly __fetch: (q: UrlQuery) => void;
+    private readonly __loadMore: LoadMoreHandler;
     private readonly __handleCreate: () => void;
     private readonly __handleDelete: (ids: string[]) => void;
-    // tslint:disable-next-line:prefer-array-literal
-    private readonly __columns: Array<Column<ProjectOutput>>;
 
     constructor(props: Props) {
         super(props);
 
-        const ToDetails = partial(LinkToDetails, props.match.url);
-        this.__columns = [
-            {
-                title: 'Name',
-                dataIndex: 'name',
-                key: 'name',
-                render: ToDetails,
-            },
-            {
-                title: 'Created',
-                dataIndex: 'createdAt',
-                key: 'createdAt',
-                render: ToDetails,
-            },
-            {
-                title: 'Updated',
-                dataIndex: 'updatedAt',
-                key: 'updatedAt',
-                render: ToDetails,
-            },
-        ];
-        this.__fetch = (q: UrlQuery) => {
+        this.__loadMore = (q: UrlQuery) => {
             this.navigate(this.getPath(), q.pagination);
         };
         this.__handleCreate = () => {
@@ -126,29 +100,49 @@ export default class ProjectsIndexPage extends Page<Params, Props> {
 
             // this.props.findUsers.refetch();
         };
-        this.__renderResults = this.__renderResults.bind(this);
+        this.__renderList = this.__renderList.bind(this);
+        this.__handleListItemClick = this.__handleListItemClick.bind(this);
     }
 
     public render(): any {
+        const { match } = this.props;
+
         return (
-            <Query query={findQuery}>
-                {this.__renderResults}
-            </Query>
+            <Layout className={css.layout}>
+                <Header className={css.header}>
+                    <Link to={match.url} className={css.logo}>Projects</Link>
+                    <Button
+                        className={css.logoutBtn}
+                        type="primary"
+                        icon="logout"
+                        role="logout"
+                    />
+                </Header>
+                <Content className={css.content}>
+                    <Query query={findQuery}>
+                        {this.__renderList}
+                    </Query>
+                </Content>
+            </Layout>
         );
     }
 
-    private __renderResults({ data, loading }: QueryResult<QueryResultProjects>): any {
+    private __renderList({ data, loading }: QueryResult<QueryResultData>): any {
         const pagination = fromQuery(this.getQuery());
+        const projects = data ? data.projects : undefined;
 
         return (
-            <DataTable
-                columns={this.__columns}
-                data={data ? data.projects : undefined}
+            <List
+                data={isArray(projects) ? projects : undefined}
                 loading={loading}
-                pageNum={pagination.page}
-                pageSize={pagination.size}
-                fetch={this.__fetch}
+                pagination={pagination}
+                loadMore={this.__loadMore}
+                onItemClick={this.__handleListItemClick}
             />
         );
+    }
+
+    private __handleListItemClick(itemId: string): void {
+        this.navigate(`${this.props.match.url}/${itemId}`);
     }
 }
