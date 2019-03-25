@@ -16,8 +16,8 @@ const css = require('./index.module.scss');
 
 const { Header, Content } = Layout;
 const findQuery = gql`
-    query findProjects {
-        projects @rest(type: "[Project]", path: "/projects") {
+    query findProjects($query: Query) {
+        projects(query: $query) @rest(type: "[Project]", path: "/projects?{args.query}") {
             id
             rev
             createdAt
@@ -96,6 +96,9 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
 
     public render(): any {
         const { match } = this.props;
+        const variables = {
+            query: this.getQuery(),
+        };
 
         return (
             <Layout className={css.layout}>
@@ -118,7 +121,7 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
                     />
                 </Header>
                 <Content className={css.content}>
-                    <Query query={findQuery}>
+                    <Query query={findQuery} variables={variables}>
                         {this.__renderList}
                     </Query>
                     <Mutation mutation={createQuery}>

@@ -32,7 +32,7 @@ export class IndexPage extends Page<never, Props> {
         }
 
         return (
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={<Loader size="large" />}>
                 <Switch>
                     {redirect}
                     <Route path="/login" component={LoadableLoginPage} />

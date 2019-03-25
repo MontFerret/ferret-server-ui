@@ -22,7 +22,7 @@ export default class HomePage extends Page<never, Props, State> {
         }
 
         return (
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={<Loader size="large" />}>
                 <Switch>
                     {redirect}
                     <Route

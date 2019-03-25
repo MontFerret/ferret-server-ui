@@ -10,6 +10,7 @@ import React from 'react';
 import { Entity } from '../../../common/models/entity';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
+import { Pagination } from '../../../common/models/query/pagination';
 import Panel, { Action } from '../table/panel';
 
 const ITEMS_UNSELECTED: Action[] = [
@@ -34,10 +35,9 @@ export interface Props<T extends Entity> {
     loading?: boolean;
     // tslint:disable-next-line:prefer-array-literal
     columns: Array<Column<T>>;
-    pageNum: number;
-    pageSize: number;
+    pagination: Pagination;
     data?: T[];
-    fetch: LoadMoreHandler;
+    loadMore: LoadMoreHandler;
     onChange?: (selected: string[]) => void;
     onCreate?: () => void;
     onDelete?: (selected: string[]) => void;
@@ -77,11 +77,11 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
     }
 
     public render(): any {
-        const { columns, data, loading } = this.props;
-        const pagination = {
-            current: this.props.pageNum,
+        const { columns, data, loading, pagination } = this.props;
+        const p = {
+            current: pagination.page,
             defaultCurrent: 1,
-            pageSize: this.props.pageSize,
+            pageSize: pagination.size,
             total: get(data, 'count', 0),
             showSizeChanger: true,
         };
@@ -98,7 +98,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                     rowKey={this.__getRowKey}
                     columns={columns}
                     dataSource={data}
-                    pagination={pagination}
+                    pagination={p}
                     loading={loading}
                     rowSelection={this.__handleRowSelection}
                     onChange={this.__handleTableChange}
@@ -149,7 +149,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
             }
         }
 
-        this.props.fetch({
+        this.props.loadMore({
             sorting,
             pagination: {
                 size: pagination.pageSize || 10,

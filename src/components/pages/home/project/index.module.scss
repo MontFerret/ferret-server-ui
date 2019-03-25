@@ -2,6 +2,12 @@
     height: 100%;
 }
 
+.menu {
+    a {
+        color: rgba(255, 255, 255, 0.65);
+    }
+}
+
 .bottomMenu {
     position: fixed;
     bottom: 3vw;

@@ -1,6 +1,7 @@
 .spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+    display: block !important;
+    position: absolute !important;
+    z-index: 4;
+    left: 50%;
+    top: 50%;
 }
