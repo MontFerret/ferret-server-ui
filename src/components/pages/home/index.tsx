@@ -15,7 +15,6 @@ export interface Props extends PageProps {}
 export default class HomePage extends Page<never, Props, State> {
     public render(): any {
         const { match, location } = this.props;
-
         let redirect;
 
         if (location.pathname === match.url) {

@@ -1,4 +1,5 @@
 import { List } from 'antd';
+import { ListGridType } from 'antd/lib/list';
 import cn from 'classnames';
 import React from 'react';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
@@ -10,6 +11,7 @@ export type ItemRenderer<T> = (item: T) => React.ReactElement;
 
 export interface Props<T = any> {
     className?: string;
+    grid?: ListGridType;
     loading?: boolean;
     pagination: Pagination;
     data?: T[];
@@ -31,6 +33,7 @@ export class DataList extends React.Component<Props> {
             pagination,
             className,
             hidePanel,
+            grid,
         } = this.props;
         const p = {
             current: pagination.page,
@@ -45,6 +48,7 @@ export class DataList extends React.Component<Props> {
             <div>
                 {panel}
                 <List
+                    grid={grid}
                     className={cn(css.list, className)}
                     dataSource={data}
                     pagination={p}

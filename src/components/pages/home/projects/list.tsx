@@ -41,6 +41,7 @@ export default class PorjectsList extends React.Component<Props> {
                     >
                         <DataList
                             hidePanel={true}
+                            grid={{ gutter: 16, column: 4 }}
                             data={data}
                             loading={loading}
                             pagination={pagination}

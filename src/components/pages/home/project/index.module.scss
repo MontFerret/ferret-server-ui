@@ -1,0 +1,14 @@
+.layout {
+    height: 100%;
+}
+
+.bottomMenu {
+    position: fixed;
+    bottom: 3vw;
+    z-index: 1;
+    height: 48px;
+    color: #fff;
+    line-height: 48px;
+    text-align: center;
+    transition: all 0.2s;
+}

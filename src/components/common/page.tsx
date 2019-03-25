@@ -31,11 +31,12 @@ export abstract class Page<
         };
     }
 
-    constructor(props: TProps) {
+    constructor(props: TProps, state?: Partial<TState>) {
         super(props);
 
         set(this, 'state', {
             query: Page.parseQuery(props),
+            ...state,
         });
     }
 

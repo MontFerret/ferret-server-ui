@@ -1106,6 +1106,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-transition-group@^2.0.16":
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-2.0.16.tgz#2dcb9e396ab385ee19c4af1c9caa469a14cd042f"
+  integrity sha512-FUJEx2BGJPU1qVQoWd9v7wpOwnCPTWhcE4iTaU5prry9SvwiI11lCXOci8Nz9cM/Fuf650l7Skg6nlVeCYjPFA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@16.8.8":
   version "16.8.8"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.8.8.tgz#4b60a469fd2469f7aa6eaa0f8cfbc51f6d76e662"
@@ -3573,6 +3580,13 @@ dom-converter@^0.2:
   integrity sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==
   dependencies:
     utila "~0.4"
+
+dom-helpers@^3.3.1:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.4.0.tgz#e9b369700f959f62ecde5a6babde4bccd9169af8"
+  integrity sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==
+  dependencies:
+    "@babel/runtime" "^7.1.2"
 
 dom-matches@>=1.0.1:
   version "2.0.0"
@@ -9388,6 +9402,16 @@ react-slick@~0.23.2:
     lodash.debounce "^4.0.8"
     prettier "^1.14.3"
     resize-observer-polyfill "^1.5.0"
+
+react-transition-group@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.7.0.tgz#60ca3bb2bf83fe71c50816a936e985ce7b8134dc"
+  integrity sha512-CzF22K0x6arjQO4AxkasMaiYcFG/QH0MhPNs45FmNsfWsQmsO9jv52sIZJAalnlryD5RgrrbLtV5CMJSokrrMA==
+  dependencies:
+    dom-helpers "^3.3.1"
+    loose-envify "^1.4.0"
+    prop-types "^15.6.2"
+    react-lifecycles-compat "^3.0.4"
 
 react@^16.8.5:
   version "16.8.5"
