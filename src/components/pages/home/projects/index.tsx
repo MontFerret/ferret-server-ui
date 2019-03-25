@@ -110,10 +110,18 @@ export default class ProjectsIndexPage extends Page<Params, Props> {
         return (
             <Layout className={css.layout}>
                 <Header className={css.header}>
-                    <Link to={match.url} className={css.logo}>Projects</Link>
+                    <div>
+                        <Link to={match.url} className={css.logo}>Browse projects</Link>
+                        <Button
+                            className={css.createBtn}
+                            type="primary"
+                        >
+                            Create
+                        </Button>
+                    </div>
                     <Button
                         className={css.logoutBtn}
-                        type="primary"
+                        type="danger"
                         icon="logout"
                         role="logout"
                     />

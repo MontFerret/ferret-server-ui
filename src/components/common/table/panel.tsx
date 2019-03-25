@@ -2,7 +2,7 @@ import { Button, Card, Dropdown, Form, Icon, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
-import React from 'react';
+import React, { Props as ReactProps } from 'react';
 import Search from '../search/search';
 const css = require('./panel.module.scss');
 
@@ -26,7 +26,7 @@ function buildAction(item: Action, index: number): any {
     );
 }
 
-function buildActionsMenu(actions: Action[], handler: (param: ClickParam) => void): any {
+function buildActionsMenu(actions?: Action[], handler?: (param: ClickParam) => void): any {
     if (actions == null || actions.length === 0) {
         return null;
     }
@@ -46,9 +46,10 @@ export interface Action {
     icon: string;
 }
 
-export interface Props {
-    actions: Action[];
-    onAction: ActionHandler;
+export interface Props extends ReactProps<any> {
+    actions?: Action[];
+    onAction?: ActionHandler;
+    onSearch?: (value: string) => any;
 }
 
 interface State {
@@ -96,9 +97,14 @@ export default class Panel extends React.Component<Props, State> {
             <Card className={css.card}>
                 <Form layout="inline">
                     <FormItem>
-                        <Search placeholder="Search" dataSource={[]} />
+                        <Search
+                            placeholder="Search"
+                            dataSource={[]}
+                            onSearch={this.props.onSearch}
+                        />
                     </FormItem>
                     {this.renderActions()}
+                    {this.props.children}
                 </Form>
             </Card>
         );

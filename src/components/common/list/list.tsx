@@ -1,7 +1,10 @@
 import { List } from 'antd';
+import cn from 'classnames';
 import React from 'react';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { Pagination } from '../../../common/models/query/pagination';
+import Panel from '../table/panel';
+const css = require('./list.module.scss');
 
 export type ItemRenderer<T> = (item: T) => React.ReactElement;
 
@@ -12,6 +15,7 @@ export interface Props<T = any> {
     data?: T[];
     loadMore: LoadMoreHandler;
     renderItem: ItemRenderer<T>;
+    hidePanel?: boolean;
 }
 
 export class DataList extends React.Component<Props> {
@@ -26,6 +30,7 @@ export class DataList extends React.Component<Props> {
             data,
             pagination,
             className,
+            hidePanel,
         } = this.props;
         const p = {
             current: pagination.page,
@@ -34,10 +39,13 @@ export class DataList extends React.Component<Props> {
             hideOnSinglePage: true,
         };
 
+        const panel = hidePanel !== true ? <Panel /> : null;
+
         return (
             <div>
+                {panel}
                 <List
-                    className={className}
+                    className={cn(css.list, className)}
                     dataSource={data}
                     pagination={p}
                     renderItem={this.__renderItem}

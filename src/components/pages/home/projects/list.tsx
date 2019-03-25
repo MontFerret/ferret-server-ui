@@ -40,6 +40,7 @@ export default class PorjectsList extends React.Component<Props> {
                         lg={20}
                     >
                         <DataList
+                            hidePanel={true}
                             data={data}
                             loading={loading}
                             pagination={pagination}
