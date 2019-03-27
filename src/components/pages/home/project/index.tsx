@@ -1,7 +1,6 @@
-import { Breadcrumb, Icon, Layout, Menu } from 'antd';
-import gql from 'graphql-tag';
+import { Col, Icon, Layout, Menu, Row } from 'antd';
+import startsWith from 'lodash/startsWith';
 import React, { Suspense } from 'react';
-import { Query, QueryResult } from 'react-apollo';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { Route as RouteConfig } from '../../../../common/routing/route';
 import Loader from '../../../common/loader/loader';
@@ -15,20 +14,6 @@ const LoadableProjectDataPage = React.lazy(() => import('./data/index'));
 const LoadableProjectScriptsPage = React.lazy(() => import('./scripts/index'));
 const LoadableProjectSettingsPage = React.lazy(() => import('./settings/index'));
 
-const projectQuery = gql`
-    query projectName($projectId: String!) {
-        project(projectId: $projectId) @rest(type: "Project", path: "/projects/{args.projectId}") {
-            name
-        }
-    }
-`;
-
-interface ProjectQueryResult {
-    project: {
-        name: string;
-    };
-}
-
 export interface Params {
     id: string;
 }
@@ -41,7 +26,6 @@ export interface Props extends PageProps<Params> {}
 
 export default class ProjectPage extends Page<Params, Props, State> {
     private readonly __routes: RouteConfig[];
-    private readonly __routesLookup: { [path: string]: string};
 
     constructor(props: Props) {
         super(props, {
@@ -75,27 +59,13 @@ export default class ProjectPage extends Page<Params, Props, State> {
                 component: LoadableProjectSettingsPage,
             },
         ];
-        this.__routesLookup = this.__routes.reduce((res: any, curr: RouteConfig, idx: number) => {
-            const out = res;
-            out[curr.path] = (idx + 1).toString();
 
-            return out;
-        },                                         {});
+        this.__renderRoutes = this.__renderRoutes.bind(this);
     }
 
     public render(): any {
-        const { match, location } = this.props;
-        let redirect;
-
-        if (location.pathname === match.url) {
-            redirect = <Redirect to={`${match.url}/dashboard`} />;
-        }
-
         const showText = !this.state.collapsed;
-        const selected = this.__routesLookup[location.pathname];
-        const variables = {
-            projectId: this.getParam('id'),
-        };
+        const selected = this.__currentTabKey();
 
         return (
             <Layout className={css.layout}>
@@ -110,7 +80,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
                         selectedKeys={[selected]}
                     >
                         {this.__routes.map((config: RouteConfig, idx: number) => {
-                            const key = idx + 1;
+                            const key = idx.toString();
 
                             return (
                                 <Menu.Item key={key}>
@@ -129,46 +99,56 @@ export default class ProjectPage extends Page<Params, Props, State> {
                         </Menu.Item>
                     </Menu>
                 </Sider>
-                <Layout style={{ padding: '0 24px 24px' }}>
-                    <Query query={projectQuery} variables={variables}>
-                        {this.__renderBreadcrumb}
-                    </Query>
-                    <Content>
-                        <Suspense fallback={<Loader size="large" />}>
-                            <Switch>
-                                {redirect}
-                                {this.__routes.map((config: RouteConfig) => {
-                                    const Component: React.SFC<any> = config.component as any;
-                                    const projectId = this.getParam('id');
-
-                                    return (
-                                        <Route
-                                            key={config.path}
-                                            path={config.path}
-                                            component={(props: any) => <Component {...props} project={projectId} />}
-                                        />
-                                    );
-                                })}
-                            </Switch>
-                        </Suspense>
+                <Layout className={css.contentLayout}>
+                    <Content className={css.content}>
+                        <Row>
+                            <Col lg={24}>
+                                {this.__renderRoutes()}
+                            </Col>
+                        </Row>
                     </Content>
                 </Layout>
             </Layout>
         );
     }
 
-    private __renderBreadcrumb({ data }: QueryResult<ProjectQueryResult>): any {
-        let name = '?';
+    private __currentTabKey(): string {
+        const { location } = this.props;
 
-        if (data != null && data.project != null) {
-            name = data.project.name;
+        const found = this.__routes.findIndex(i => startsWith(location.pathname, i.path));
+
+        return found ? found.toString() : '0';
+    }
+
+    private __renderRoutes(): any {
+        const { match, location } = this.props;
+
+        let redirect;
+
+        if (location.pathname === match.url) {
+            redirect = <Redirect to={`${match.url}/dashboard`} />;
         }
 
         return (
-            <Breadcrumb style={{ margin: '16px 0' }}>
-                <Breadcrumb.Item><Link to="/home/projects">Projects</Link></Breadcrumb.Item>
-                <Breadcrumb.Item>{name}</Breadcrumb.Item>
-            </Breadcrumb>
+            <Suspense fallback={<Loader size="large" />}>
+                <Switch>
+                    {redirect}
+                    {this.__routes.map((config: RouteConfig) => {
+                        const Component: React.SFC<any> = config.component as any;
+                        const projectId = this.getParam('id');
+
+                        return (
+                            <Route
+                                key={config.path}
+                                path={config.path}
+                                component={(props: any) => {
+                                    return <Component {...props} project={projectId} />;
+                                }}
+                            />
+                        );
+                    })}
+                </Switch>
+            </Suspense>
         );
     }
 

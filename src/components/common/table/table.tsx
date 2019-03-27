@@ -6,7 +6,7 @@ import {
 } from 'antd/lib/table';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Entity } from '../../../common/models/entity';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
@@ -89,7 +89,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
         const actions = this.__getActions();
 
         return (
-            <div>
+            <Fragment>
                 <Panel
                     actions={actions}
                     onAction={this.__handleAction}
@@ -103,7 +103,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                     rowSelection={this.__handleRowSelection}
                     onChange={this.__handleTableChange}
                 />
-            </div>
+            </Fragment>
         );
     }
 

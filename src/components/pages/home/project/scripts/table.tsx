@@ -1,15 +1,17 @@
+import partial from 'lodash/partial';
 import React from 'react';
 import { LoadMoreHandler } from '../../../../../common/models/query/loader';
 import { Pagination } from '../../../../../common/models/query/pagination';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
+import { LinkToDetails } from '../../../../common/link/details';
 import { Column, DataTable } from '../../../../common/table/table';
 
 export interface Props {
+    baseUrl: string;
     loading: boolean;
     data?: ScriptOutput[];
     pagination: Pagination;
     loadMore: LoadMoreHandler;
-    onItemClick: (id: string) => void;
 }
 
 export default class ScriptsTable extends React.Component<Props> {
@@ -19,21 +21,32 @@ export default class ScriptsTable extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        const ToDetails = partial(LinkToDetails, props.baseUrl);
+
         this.__columns = [
             {
                 dataIndex: 'name',
                 key: 'name',
                 title: 'Name',
+                render: ToDetails,
+            },
+            {
+                dataIndex: 'description',
+                key: 'description',
+                title: 'Description',
+                render: ToDetails,
             },
             {
                 dataIndex: 'createdAt',
                 key: 'createdAt',
-                title: 'Created at',
+                title: 'Created',
+                render: ToDetails,
             },
             {
                 dataIndex: 'updatedAt',
                 key: 'updatedAt',
-                title: 'Updated at',
+                title: 'Updated',
+                render: ToDetails,
             },
         ];
     }

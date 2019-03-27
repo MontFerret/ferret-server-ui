@@ -1,7 +1,6 @@
-import { Col, Row, Spin } from 'antd';
+import { Card, Col, Row, Spin } from 'antd';
 import React from 'react';
 import { Page, PageProps } from '../../common/page';
-import Paper from '../../common/paper/paper';
 import Form from './form';
 const css = require('./index.module.scss');
 
@@ -25,15 +24,14 @@ export default class LoginPage extends Page<never, Props> {
                 >
                     <Col span={5} className={css.column}>
                         <Spin spinning={false}>
-                            <Paper
-                                depth={3}
+                            <Card
                                 className={css.card}
                             >
                                 <Form
                                     username={''}
                                     onSubmit={this.__onSubmit}
                                 />
-                            </Paper>
+                            </Card>
                         </Spin>
                     </Col>
                 </Row>

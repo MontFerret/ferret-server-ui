@@ -1,8 +1,9 @@
-import { Button, Card, Dropdown, Form, Icon, Menu } from 'antd';
+import { Button, Col, Dropdown, Form, Icon, Menu, Row } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
+import cn from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
-import React, { Props as ReactProps } from 'react';
+import React from 'react';
 import Search from '../search/search';
 const css = require('./panel.module.scss');
 
@@ -46,7 +47,8 @@ export interface Action {
     icon: string;
 }
 
-export interface Props extends ReactProps<any> {
+export interface Props {
+    className?: string;
     actions?: Action[];
     onAction?: ActionHandler;
     onSearch?: (value: string) => any;
@@ -82,31 +84,33 @@ export default class Panel extends React.Component<Props, State> {
         }
 
         return (
-            <FormItem className={css.actions}>
-                <Dropdown overlay={actionsMenu}>
-                    <Button>
-                        Actions <Icon type="down" />
-                    </Button>
-                </Dropdown>
-            </FormItem>
+            <Dropdown overlay={actionsMenu}>
+                <Button>
+                    Actions <Icon type="down" />
+                </Button>
+            </Dropdown>
         );
     }
 
     public render(): any {
         return (
-            <Card className={css.card}>
-                <Form layout="inline">
-                    <FormItem>
-                        <Search
-                            placeholder="Search"
-                            dataSource={[]}
-                            onSearch={this.props.onSearch}
-                        />
-                    </FormItem>
+            <Row
+                className={css.panel}
+                type="flex"
+                align="top"
+                justify="space-between"
+            >
+                <Col lg={6}>
+                    <Search
+                        placeholder="Search"
+                        dataSource={[]}
+                        onSearch={this.props.onSearch}
+                    />
+                </Col>
+                <Col lg={2}>
                     {this.renderActions()}
-                    {this.props.children}
-                </Form>
-            </Card>
+                </Col>
+            </Row>
         );
     }
 

@@ -1,29 +1,9 @@
-import { Col, Row, notification } from 'antd';
-import gql from 'graphql-tag';
-import isArray from 'lodash/isArray';
-import React from 'react';
-import { Query, QueryResult } from 'react-apollo';
-import { fromQuery } from '../../../../../common/models/query/pagination';
-import { Query as UrlQuery } from '../../../../../common/models/query/query';
-import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
+import React, { Fragment } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import { Page, PageProps } from '../../../../common/page';
-import Table from './table';
 
-const findScriptsQuery = gql`
-    query findScripts($projectId: String!, $query: Query) {
-        scripts(projectId: $projectId, query: $query)
-            @rest(type: "[Project]", path: "/projects/{args.projectId}/scripts?{args.query}" ) {
-                id,
-                rev,
-                createdAt,
-                name
-            }
-    }
-`;
-
-interface QueryResultData {
-    scripts: ScriptOutput[];
-}
+const LoadableScriptsListPage = React.lazy(() => import('./scripts'));
+const LoadableScriptDetailsPage = React.lazy(() => import('./script/index'));
 
 export type Params = never;
 export interface Props extends PageProps<Params> {
@@ -34,58 +14,33 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
     constructor(props: Props) {
         super(props);
 
-        this.__loadMoreScripts = this.__loadMoreScripts.bind(this);
-        this.__renderScripts = this.__renderScripts.bind(this);
-        this.__handleListItemClick = this.__handleListItemClick.bind(this);
+        this.__renderScriptsList = this.__renderScriptsList.bind(this);
+        this.__renderScriptDetails = this.__renderScriptDetails.bind(this);
     }
 
     public render(): any {
-        const { project } = this.props;
-        const urlQuery = fromQuery(this.getQuery());
-        const variables = {
-            projectId: project,
-            query: urlQuery,
-        };
+        const { match } = this.props;
 
         return (
-            <Row>
-                <Col lg={24}>
-                    <Query
-                        query={findScriptsQuery}
-                        variables={variables}
-                    >
-                        {this.__renderScripts}
-                    </Query>
-                </Col>
-            </Row>
+            <Fragment>
+                <Switch>
+                    <Route path={match.path} component={this.__renderScriptsList} exact />
+                    <Route path={`${match.path}/new`} component={this.__renderScriptDetails} />
+                    <Route path={`${match.path}/:id`} component={this.__renderScriptDetails} />
+                </Switch>
+            </Fragment>
         );
     }
 
-    private __renderScripts({ data, loading, error }: QueryResult<QueryResultData>): any {
-        const pagination = fromQuery(this.getQuery());
-        const scripts = data ? data.scripts : undefined;
-
-        if (error != null) {
-            notification.error({
-                message: error.message,
-                type: 'error',
-            });
-        }
-
+    private __renderScriptsList(props: any): any {
         return (
-            <Table
-                data={isArray(scripts) ? scripts : undefined}
-                loading={loading}
-                pagination={pagination}
-                loadMore={this.__loadMoreScripts}
-                onItemClick={this.__handleListItemClick}
-            />
+            <LoadableScriptsListPage {...props} projectId={this.props.project} />
         );
     }
 
-    private __handleListItemClick(_: string): void {}
-
-    private __loadMoreScripts(q: UrlQuery): any {
-        this.navigate(this.getPath(), q.pagination);
+    private __renderScriptDetails(props: any): any {
+        return (
+            <LoadableScriptDetailsPage {...props} projectId={this.props.project} />
+        );
     }
 }

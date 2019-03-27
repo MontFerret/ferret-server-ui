@@ -20,4 +20,5 @@ export interface ScriptOutput {
     createdAt: string;
     updatedAt?: string;
     name: string;
+    description?: string;
 }

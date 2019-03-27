@@ -1,25 +1,28 @@
-import { Dropdown, Icon, Menu } from 'antd';
-import React, { SFC } from 'react';
+import { Button, Col, Row } from 'antd';
+import React from 'react';
 
-// interface Props {
+const css = require('./panel.module.scss');
 
-// }
-
-function FormToolbar(_: any): any {
-    const items: Array<React.ReactElement<any>> = [];
-    const menu = (
-        <Menu>
-            {items}
-        </Menu>
-    );
-
-    return (
-        <Dropdown
-            overlay={menu}
-        >
-            Actions <Icon type="ellipsis" />
-        </Dropdown>
-    );
+export default class FormPanel extends React.Component {
+    public render(): any {
+        return (
+            <Row>
+                <Col lg={24}>
+                    <Button
+                        className={css.button}
+                        icon="close"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="primary"
+                        className={css.button}
+                        icon="save"
+                    >
+                        Save
+                    </Button>
+                </Col>
+            </Row>
+        );
+    }
 }
-
-export default FormToolbar as SFC;
