@@ -3,7 +3,6 @@ import { FormComponentProps } from 'antd/lib/form';
 import get from 'lodash/get';
 import React from 'react';
 import { ScriptEntity } from '../../../../../../models/api/model/scriptEntity';
-import FormPanel from '../../../../../common/form/panel';
 import PageHeader from '../../../../../common/page-header/page-header';
 const css = require('./form.module.scss');
 

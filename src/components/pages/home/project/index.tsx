@@ -1,7 +1,9 @@
-import { Col, Icon, Layout, Menu, Row } from 'antd';
+import { Breadcrumb, Col, Icon, Layout, Menu, Row } from 'antd';
+import gql from 'graphql-tag';
 import startsWith from 'lodash/startsWith';
 import React, { Suspense } from 'react';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { Query, QueryResult } from 'react-apollo';
+import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { Route as RouteConfig } from '../../../../common/routing/route';
 import Loader from '../../../common/loader/loader';
 import { Page, PageProps, PageState } from '../../../common/page';
@@ -13,6 +15,20 @@ const LoadableProjectDashboardPage = React.lazy(() => import('./dashboard/index'
 const LoadableProjectDataPage = React.lazy(() => import('./data/index'));
 const LoadableProjectScriptsPage = React.lazy(() => import('./scripts/index'));
 const LoadableProjectSettingsPage = React.lazy(() => import('./settings/index'));
+
+const projectQuery = gql`
+    query projectName($projectId: String!) {
+        project(projectId: $projectId) @rest(type: "Project", path: "/projects/{args.projectId}") {
+            name
+        }
+    }
+`;
+
+interface ProjectQueryResult {
+    project: {
+        name: string;
+    };
+}
 
 export interface Params {
     id: string;
@@ -26,6 +42,7 @@ export interface Props extends PageProps<Params> {}
 
 export default class ProjectPage extends Page<Params, Props, State> {
     private readonly __routes: RouteConfig[];
+    private readonly __routeNames: { [path: string]: string };
 
     constructor(props: Props) {
         super(props, {
@@ -59,13 +76,25 @@ export default class ProjectPage extends Page<Params, Props, State> {
                 component: LoadableProjectSettingsPage,
             },
         ];
+        this.__routeNames = {
+            '/home/projects': 'Projects',
+            [props.match.url]: props.match.params.id,
+            [`${props.match.url}/dashboard`]: 'Dasboard',
+            [`${props.match.url}/scripts`]: 'Scripts',
+            [`${props.match.url}/data`]: 'Data',
+            [`${props.match.url}/settings`]: 'Settings',
+        };
 
+        this.__renderBreadcrumb = this.__renderBreadcrumb.bind(this);
         this.__renderRoutes = this.__renderRoutes.bind(this);
     }
 
     public render(): any {
         const showText = !this.state.collapsed;
         const selected = this.__currentTabKey();
+        const variables = {
+            projectId: this.getParam('id'),
+        };
 
         return (
             <Layout className={css.layout}>
@@ -100,6 +129,9 @@ export default class ProjectPage extends Page<Params, Props, State> {
                     </Menu>
                 </Sider>
                 <Layout className={css.contentLayout}>
+                    <Query query={projectQuery} variables={variables}>
+                        {this.__renderBreadcrumb}
+                    </Query>
                     <Content className={css.content}>
                         <Row>
                             <Col lg={24}>
@@ -118,6 +150,38 @@ export default class ProjectPage extends Page<Params, Props, State> {
         const found = this.__routes.findIndex(i => startsWith(location.pathname, i.path));
 
         return found ? found.toString() : '0';
+    }
+
+    private __renderBreadcrumb({ data }: QueryResult<ProjectQueryResult>): any {
+        const props = this.props;
+
+        const BreadcrumbsItem = ({ match }: RouteComponentProps) => {
+            let title = this.__routeNames[match.url] || (match.params as any).path;
+            let item;
+
+            if (props.match.params.id === title && data && data.project) {
+                title = data.project.name;
+            }
+
+            if (match.isExact) {
+                item = title;
+            } else {
+                item = <Link to={match.url}>{title}</Link>;
+            }
+
+            return (
+                <>
+                    <Breadcrumb.Item>{item}</Breadcrumb.Item>
+                    <Route path={`${match.url}/:path`} component={BreadcrumbsItem} />
+                </>
+            );
+        };
+
+        return (
+            <Breadcrumb style={{ margin: '16px 0' }}>
+                <Route path="/home/:path" component={BreadcrumbsItem} />
+            </Breadcrumb>
+        );
     }
 
     private __renderRoutes(): any {
