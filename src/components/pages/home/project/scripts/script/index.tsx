@@ -1,4 +1,4 @@
-import { Col, Form, Input, Row } from 'antd';
+import { Checkbox, Col, Form, Input, Row } from 'antd';
 import gql from 'graphql-tag';
 import get from 'lodash/get';
 import React, { Fragment } from 'react';
@@ -61,15 +61,22 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
     public render(): any {
         const { projectId } = this.props;
         const scriptId = this.getParam('id');
+        const title = (script?: ScriptEntity) => {
+            return script ? script.name : '';
+        };
+        const onBack = () => {
+            this.navigateBack(1);
+        };
 
         return (
             <Container
                 id={scriptId}
                 projectId={projectId}
+                title={title}
                 fetch={getScriptQuery}
                 create={createScriptMutation}
                 update={updateScriptMutation}
-                title="Script"
+                onBack={onBack}
             >
                 {({
                     form,
@@ -90,11 +97,12 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
                                 <Col lg={12}>
                                     <fieldset>
                                         <legend>Persistence</legend>
-                                        <Form.Item label="Enable">
+                                        <Form.Item>
                                             {getFieldDecorator('persistence.enabled', {
+                                                valuePropName: 'checked',
                                                 initialValue: get(value, 'persistence.enabled', false),
                                             })(
-                                                <Input type="checkbox" />,
+                                                <Checkbox>Enable</Checkbox>,
                                             )}
                                         </Form.Item>
                                     </fieldset>
@@ -102,21 +110,24 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
                             </Row>
                             <Row>
                                 <Col lg={24}>
-                                    <Form.Item
-                                        label="Query"
-                                    >
-                                        {getFieldDecorator('execution.query', {
-                                            initialValue: get(value, 'execution.query'),
-                                            rules: [
-                                                {
-                                                    required: true,
-                                                    message: 'Input script query',
-                                                },
-                                            ],
-                                        })(
-                                            <TextArea rows={10} />,
-                                        )}
-                                    </Form.Item>
+                                    <fieldset>
+                                        <legend>Execution</legend>
+                                        <Form.Item
+                                            label="Query"
+                                        >
+                                            {getFieldDecorator('execution.query', {
+                                                initialValue: get(value, 'execution.query'),
+                                                rules: [
+                                                    {
+                                                        required: true,
+                                                        message: 'Input script query',
+                                                    },
+                                                ],
+                                            })(
+                                                <TextArea rows={10} />,
+                                            )}
+                                        </Form.Item>
+                                    </fieldset>
                                 </Col>
                             </Row>
                         </Fragment>

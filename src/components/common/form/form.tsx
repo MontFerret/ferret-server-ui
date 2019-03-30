@@ -104,6 +104,7 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
             form,
             children,
             title,
+            onBack,
         } = this.props;
 
         const loading = qr.loading || mr.loading;
@@ -158,6 +159,7 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
                                         title={titleStr}
                                         touched={touched}
                                         valid={valid}
+                                        onBack={onBack}
                                         onSave={handleSave}
                                         onCancel={handleCancel}
                                     />
