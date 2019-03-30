@@ -1,10 +1,10 @@
 import { Breadcrumb, Col, Icon, Layout, Menu, Row } from 'antd';
-import gql from 'graphql-tag';
 import startsWith from 'lodash/startsWith';
 import React, { Suspense } from 'react';
 import { Query, QueryResult } from 'react-apollo';
 import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { Route as RouteConfig } from '../../../../common/routing/route';
+import { getQuery } from '../../../../queries/project';
 import Loader from '../../../common/loader/loader';
 import { Page, PageProps, PageState } from '../../../common/page';
 
@@ -15,14 +15,6 @@ const LoadableProjectDashboardPage = React.lazy(() => import('./dashboard/index'
 const LoadableProjectDataPage = React.lazy(() => import('./data/index'));
 const LoadableProjectScriptsPage = React.lazy(() => import('./scripts/index'));
 const LoadableProjectSettingsPage = React.lazy(() => import('./settings/index'));
-
-const projectQuery = gql`
-    query projectName($projectId: String!) {
-        project(projectId: $projectId) @rest(type: "Project", path: "/projects/{args.projectId}") {
-            name
-        }
-    }
-`;
 
 interface ProjectQueryResult {
     project: {
@@ -93,7 +85,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
         const showText = !this.state.collapsed;
         const selected = this.__currentTabKey();
         const variables = {
-            projectId: this.getParam('id'),
+            id: this.getParam('id'),
         };
 
         return (
@@ -129,7 +121,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
                     </Menu>
                 </Sider>
                 <Layout className={css.contentLayout}>
-                    <Query query={projectQuery} variables={variables}>
+                    <Query query={getQuery} variables={variables}>
                         {this.__renderBreadcrumb}
                     </Query>
                     <Content className={css.content}>

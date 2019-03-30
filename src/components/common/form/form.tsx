@@ -112,6 +112,7 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
             children,
             title,
             onBack,
+            onDelete,
             delete: del,
         } = this.props;
 
@@ -148,7 +149,11 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
                         id,
                         projectId,
                     },
-                });
+                }).then((_: FetchResult) => {
+                    if (typeof onDelete === 'function') {
+                        onDelete();
+                    }
+                }).catch(this.__handleError);
             };
         }
 

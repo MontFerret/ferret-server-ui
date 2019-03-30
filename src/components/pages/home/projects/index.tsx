@@ -1,53 +1,22 @@
 import { Button, Layout } from 'antd';
-import gql from 'graphql-tag';
 import isArray from 'lodash/isArray';
 import React from 'react';
 import { Mutation, MutationFunc, MutationResult, Query, QueryResult } from 'react-apollo';
 import { Link } from 'react-router-dom';
+import { MutationResultData } from '../../../../common/graphql/mutation/result';
+import { QueryResultDataList } from '../../../../common/graphql/query/result';
 import { LoadMoreHandler } from '../../../../common/models/query/loader';
 import { fromQuery } from '../../../../common/models/query/pagination';
 import { Query as UrlQuery } from '../../../../common/models/query/query';
 import { ProjectCreate } from '../../../../models/api/model/projectCreate';
 import { ProjectOutput } from '../../../../models/api/model/projectOutput';
+import { createMutation, findQuery } from '../../../../queries/project';
 import { Page, PageProps, PageState } from '../../../common/page';
 import NewProjectForm from './form';
 import List from './list';
 const css = require('./index.module.scss');
 
 const { Header, Content } = Layout;
-const findQuery = gql`
-    query findProjects($query: Query) {
-        projects(query: $query) @rest(type: "[Project]", path: "/projects?{args.query}") {
-            id
-            rev
-            createdAt
-            updatedAt
-            name
-        }
-    }
-`;
-
-// tslint:disable:max-line-length
-const createQuery = gql`
-    mutation createProject($input: Project!) {
-        createProject(input: $input) @rest(
-            method: "POST",
-            path: "projects"
-        ) {
-            id
-        }
-    }
-`;
-
-interface QueryResultData {
-    projects: ProjectOutput[];
-}
-
-interface MutationResultData {
-    createProject: {
-        id: string;
-    };
-}
 
 interface QueryVariables {
     criteria: UrlQuery;
@@ -124,7 +93,7 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
                     <Query query={findQuery} variables={variables}>
                         {this.__renderList}
                     </Query>
-                    <Mutation mutation={createQuery}>
+                    <Mutation mutation={createMutation}>
                         {this.__renderForm}
                     </Mutation>
                 </Content>
@@ -132,9 +101,9 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         );
     }
 
-    private __renderList({ data, loading }: QueryResult<QueryResultData>): any {
+    private __renderList({ data, loading }: QueryResult<QueryResultDataList<ProjectOutput>>): any {
         const pagination = fromQuery(this.getQuery());
-        const projects = data ? data.projects : undefined;
+        const projects = data ? data.entities : undefined;
 
         return (
             <List
@@ -156,7 +125,7 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         };
 
         if (!loading && !error && data) {
-            this.__handleListItemClick(data.createProject.id);
+            this.__handleListItemClick(data.metadata.id);
 
             return;
         }

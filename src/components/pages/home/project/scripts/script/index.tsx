@@ -1,51 +1,17 @@
 import { Checkbox, Col, Form, Input, Row } from 'antd';
-import gql from 'graphql-tag';
 import get from 'lodash/get';
 import React, { Fragment } from 'react';
 import { ScriptEntity } from '../../../../../../models/api/model/scriptEntity';
+import {
+    createMutation,
+    deleteMutation,
+    getQuery,
+    updateMutation,
+} from '../../../../../../queries/script';
 import DescriptionField from '../../../../../common/form/fields/descr';
 import NameField from '../../../../../common/form/fields/name';
 import Container, { FormContext } from '../../../../../common/form/form';
 import { Page, PageProps } from '../../../../../common/page';
-
-const getScriptQuery = gql`
-    query findScriptsQuery($projectId: String!, $id: String!) {
-        entity(projectId: $projectId, id: $id)
-            @rest(type: "Script", path: "/projects/{args.projectId}/scripts/{args.id}" ) {
-                id,
-                rev,
-                createdAt,
-                name,
-                description,
-                execution,
-                persistence,
-            }
-    }
-`;
-
-const createScriptMutation = gql`
-    mutation createScriptMutation($projectId: String!, $input: Script!) {
-        metadata(projectId: $projectId, input: $input) @rest(
-            method: "POST",
-            path: "projects/{args.projectId}/scripts"
-        ) {
-            id,
-            rev
-        }
-    }
-`;
-
-const updateScriptMutation = gql`
-    mutation updateScriptMutation($projectId: String!, $id: String!, $input: Script!) {
-        metadata(projectId: $projectId, id: $id, input: $input) @rest(
-            method: "PUT",
-            path: "projects/{args.projectId}/scripts/{args.id}"
-        ) {
-            id,
-            rev
-        }
-    }
-`;
 
 const { TextArea } = Input;
 
@@ -78,10 +44,12 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
                 id={scriptId}
                 projectId={projectId}
                 title={title}
-                fetch={getScriptQuery}
-                create={createScriptMutation}
-                update={updateScriptMutation}
+                fetch={getQuery}
+                create={createMutation}
+                update={updateMutation}
+                delete={deleteMutation}
                 onCreate={onCreate}
+                onDelete={onBack}
                 onBack={onBack}
             >
                 {({

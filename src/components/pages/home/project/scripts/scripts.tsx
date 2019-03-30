@@ -1,31 +1,15 @@
-import { Button, Card, notification } from 'antd';
-import gql from 'graphql-tag';
+import { Card, notification } from 'antd';
 import isArray from 'lodash/isArray';
 import React, { Fragment } from 'react';
 import { Query, QueryResult } from 'react-apollo';
+import { QueryResultDataList } from '../.../../../../../../common/graphql/query/result';
 import { fromQuery } from '../../../../../common/models/query/pagination';
 import { Query as UrlQuery } from '../../../../../common/models/query/query';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
+import { findQuery } from '../../../../../queries/script';
 import { Page, PageProps } from '../../../../common/page';
 import PageHeader from '../../../../common/page-header/page-header';
 import Table from './table';
-
-const findScriptsQuery = gql`
-    query findScripts($projectId: String!, $query: Query) {
-        scripts(projectId: $projectId, query: $query)
-            @rest(type: "[Script]", path: "/projects/{args.projectId}/scripts?{args.query}" ) {
-                id,
-                rev,
-                createdAt,
-                name,
-                description
-            }
-    }
-`;
-
-interface QueryResultData {
-    scripts: ScriptOutput[];
-}
 
 export type Params = never;
 export interface Props extends PageProps<Params> {
@@ -55,8 +39,9 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                         title="Scripts"
                     />
                     <Query
-                        query={findScriptsQuery}
+                        query={findQuery}
                         variables={variables}
+                        fetchPolicy={'network-only'}
                         >
                         {this.__renderScripts}
                     </Query>
@@ -65,9 +50,9 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         );
     }
 
-    private __renderScripts({ data, loading, error }: QueryResult<QueryResultData>): any {
+    private __renderScripts({ data, loading, error }: QueryResult<QueryResultDataList<ScriptOutput>>): any {
         const pagination = fromQuery(this.getQuery());
-        const scripts = data ? data.scripts : undefined;
+        const scripts = data ? data.entities : undefined;
 
         if (error != null) {
             notification.error({
@@ -89,13 +74,5 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
     private __loadMoreScripts(q: UrlQuery): any {
         this.navigate(this.getPath(), q.pagination);
-    }
-
-    private __renderButtons(): any {
-        return [
-            <Button key="create">
-                Create
-            </Button>,
-        ];
     }
 }
