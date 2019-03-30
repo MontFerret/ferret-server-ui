@@ -1,6 +1,6 @@
-import { Card, notification } from 'antd';
+import { notification } from 'antd';
 import isArray from 'lodash/isArray';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Query, QueryResult } from 'react-apollo';
 import { QueryResultDataList } from '../.../../../../../../common/graphql/query/result';
 import { fromQuery } from '../../../../../common/models/query/pagination';
@@ -8,7 +8,6 @@ import { Query as UrlQuery } from '../../../../../common/models/query/query';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
 import { findQuery } from '../../../../../queries/script';
 import { Page, PageProps } from '../../../../common/page';
-import PageHeader from '../../../../common/page-header/page-header';
 import Table from './table';
 
 export type Params = never;
@@ -22,6 +21,7 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
         this.__loadMoreScripts = this.__loadMoreScripts.bind(this);
         this.__renderScripts = this.__renderScripts.bind(this);
+        this.__handleCreate = this.__handleCreate.bind(this);
     }
 
     public render(): any {
@@ -33,20 +33,13 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         };
 
         return (
-            <Fragment>
-                <Card>
-                    <PageHeader
-                        title="Scripts"
-                    />
-                    <Query
-                        query={findQuery}
-                        variables={variables}
-                        fetchPolicy={'network-only'}
-                        >
-                        {this.__renderScripts}
-                    </Query>
-                </Card>
-            </Fragment>
+            <Query
+                query={findQuery}
+                variables={variables}
+                fetchPolicy={'network-only'}
+            >
+                {this.__renderScripts}
+            </Query>
         );
     }
 
@@ -68,11 +61,16 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                 loading={loading}
                 pagination={pagination}
                 loadMore={this.__loadMoreScripts}
+                onCreate={this.__handleCreate}
             />
         );
     }
 
     private __loadMoreScripts(q: UrlQuery): any {
         this.navigate(this.getPath(), q.pagination);
+    }
+
+    private __handleCreate(): void {
+        this.navigate(`${this.props.match.path}/new`);
     }
 }

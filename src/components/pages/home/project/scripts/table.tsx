@@ -12,6 +12,7 @@ export interface Props {
     data?: ScriptOutput[];
     pagination: Pagination;
     loadMore: LoadMoreHandler;
+    onCreate: () => void;
 }
 
 export default class ScriptsTable extends React.Component<Props> {
@@ -57,15 +58,18 @@ export default class ScriptsTable extends React.Component<Props> {
             loading,
             loadMore,
             pagination,
+            onCreate,
         } = this.props;
 
         return (
             <DataTable
+                title="Scripts"
                 columns={this.__columns}
                 data={data}
                 loading={loading}
                 loadMore={loadMore}
                 pagination={pagination}
+                onCreate={onCreate}
             />
         );
     }

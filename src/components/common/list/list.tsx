@@ -4,12 +4,13 @@ import cn from 'classnames';
 import React from 'react';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { Pagination } from '../../../common/models/query/pagination';
-import Panel from '../table/panel';
+import PageHeader from '../page-header/page-header';
 const css = require('./list.module.scss');
 
 export type ItemRenderer<T> = (item: T) => React.ReactElement;
 
 export interface Props<T = any> {
+    title?: string;
     className?: string;
     grid?: ListGridType;
     loading?: boolean;
@@ -29,6 +30,7 @@ export class DataList extends React.Component<Props> {
 
     public render(): any {
         const {
+            title,
             data,
             pagination,
             className,
@@ -42,7 +44,7 @@ export class DataList extends React.Component<Props> {
             hideOnSinglePage: true,
         };
 
-        const panel = hidePanel !== true ? <Panel /> : null;
+        const panel = hidePanel !== true ? <PageHeader title={title || ''} /> : null;
 
         return (
             <div>

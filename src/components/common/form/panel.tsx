@@ -21,7 +21,6 @@ export default class FormPanel extends React.PureComponent<Props> {
 
         return (
             <PageHeader
-                className={css.panel}
                 title={title}
                 onBack={onBack}
                 extra={this.__renderButtons()}

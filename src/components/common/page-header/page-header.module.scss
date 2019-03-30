@@ -1,3 +1,10 @@
 .ph {
     padding-left: 0;
+    margin-bottom: 24px;
+
+    div > span:nth-child(2n) {
+        button {
+            min-width: 100px;
+        }
+    }
 }

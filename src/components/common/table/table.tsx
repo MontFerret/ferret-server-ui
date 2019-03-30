@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+import { Button, Card, Table } from 'antd';
 import {
     ColumnProps,
     PaginationConfig,
@@ -6,32 +6,17 @@ import {
 } from 'antd/lib/table';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Entity } from '../../../common/models/entity';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
 import { Pagination } from '../../../common/models/query/pagination';
-import Panel, { Action } from '../table/panel';
-
-const ITEMS_UNSELECTED: Action[] = [
-    {
-        id: 'create',
-        text: 'Create',
-        icon: 'edit',
-    },
-];
-
-const ITEMS_SELECTED: Action[] = [
-    {
-        id: 'delete',
-        text: 'Delete',
-        icon: 'delete',
-    },
-];
+import PageHeader from '../page-header/page-header';
 
 export type Column<T> = ColumnProps<T>;
 
 export interface Props<T extends Entity> {
+    title?: string;
     loading?: boolean;
     // tslint:disable-next-line:prefer-array-literal
     columns: Array<Column<T>>;
@@ -40,6 +25,7 @@ export interface Props<T extends Entity> {
     loadMore: LoadMoreHandler;
     onChange?: (selected: string[]) => void;
     onCreate?: () => void;
+    onClone?: (id: string) => void;
     onDelete?: (selected: string[]) => void;
 }
 
@@ -58,7 +44,6 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
         };
 
         this.__getRowKey = this.__getRowKey.bind(this);
-        this.__handleAction = this.__handleAction.bind(this);
         this.__handleRowSelection = {
             onChange: (selectedRowKeys: string[]) => {
                 if (this.props.onChange != null) {
@@ -74,10 +59,18 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 disabled: record.name === 'Disabled User', // Column configuration not to be checked
             }),
         };
+        this.__handleCloneClick = this.__handleCloneClick.bind(this);
+        this.__handleDeleteClick = this.__handleDeleteClick.bind(this);
     }
 
     public render(): any {
-        const { columns, data, loading, pagination } = this.props;
+        const {
+            columns,
+            data,
+            loading,
+            pagination,
+            title,
+        } = this.props;
         const p = {
             current: pagination.page,
             defaultCurrent: 1,
@@ -86,13 +79,11 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
             showSizeChanger: true,
         };
 
-        const actions = this.__getActions();
-
         return (
-            <Fragment>
-                <Panel
-                    actions={actions}
-                    onAction={this.__handleAction}
+            <Card>
+                <PageHeader
+                    title={title}
+                    extra={this.__renderButtons()}
                 />
                 <Table
                     rowKey={this.__getRowKey}
@@ -103,30 +94,56 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                     rowSelection={this.__handleRowSelection}
                     onChange={this.__handleTableChange}
                 />
-            </Fragment>
+            </Card>
         );
     }
 
-    private __getActions(): Action[] {
-        if (isEmpty(this.state.selectedRows)) {
-            return ITEMS_UNSELECTED;
-        }
+    private __renderButtons(): any[] {
+        const {
+            selectedRows,
+        } = this.state;
+        const {
+            onCreate,
+        } = this.props;
+        const buttons = [];
 
-        return ITEMS_SELECTED;
-    }
+        buttons.push(
+            <Button
+                type="primary"
+                key="create"
+                icon="plus"
+                disabled={!isEmpty(selectedRows)}
+                onClick={onCreate}
+            >
+                Create
+            </Button>,
+        );
 
-    private __handleAction(idx: number): void {
-        const action = this.__getActions()[idx];
+        buttons.push(
+            <Button
+                type="default"
+                key="copy"
+                icon="copy"
+                disabled={selectedRows.length > 1 || selectedRows.length < 1}
+                onClick={this.__handleCloneClick}
+            >
+                Clone
+            </Button>,
+        );
 
-        if (action.id === 'create') {
-            if (this.props.onCreate != null) {
-                this.props.onCreate();
-            }
-        } else if (action.id === 'delete') {
-            if (this.props.onDelete != null) {
-                this.props.onDelete(this.state.selectedRows);
-            }
-        }
+        buttons.push(
+            <Button
+                type="danger"
+                key="delete"
+                icon="delete"
+                disabled={isEmpty(selectedRows)}
+                onClick={this.__handleDeleteClick}
+            >
+                Delete
+            </Button>,
+        );
+
+        return buttons;
     }
 
     private __handleTableChange(
@@ -156,6 +173,32 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 page: pagination.current || 1,
             },
         });
+    }
+
+    private __handleCloneClick(): void {
+        const { onClone } = this.props;
+        const { selectedRows } = this.state;
+
+        if (isEmpty(selectedRows)) {
+            return;
+        }
+
+        if (typeof onClone === 'function') {
+            onClone(selectedRows[0]);
+        }
+    }
+
+    private __handleDeleteClick(): void {
+        const { onDelete } = this.props;
+        const { selectedRows } = this.state;
+
+        if (isEmpty(selectedRows)) {
+            return;
+        }
+
+        if (typeof onDelete === 'function') {
+            onDelete(selectedRows);
+        }
     }
 
     private __getRowKey(row: any): any {
