@@ -16,7 +16,7 @@ export abstract class Page<
     TParams,
     TProps extends PageProps<TParams>,
     TState extends PageState = { query: Query }
-> extends React.Component<TProps, TState> {
+> extends React.PureComponent<TProps, TState> {
     public static parseQuery(props: PageProps<any>): Query {
         return qs.parse(get(props, 'location.search'));
     }
