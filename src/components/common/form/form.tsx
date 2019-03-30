@@ -1,10 +1,12 @@
 import { Alert, Card, Form, Spin } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { DocumentNode } from 'apollo-link';
+import { DataProxy } from 'apollo-cache';
+import { DocumentNode, FetchResult } from 'apollo-link';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement } from 'react';
 import { Mutation, MutationFunc, MutationResult, Query, QueryResult } from 'react-apollo';
 import isFormValid from '../../../common/form/is-valid';
+import { updateFormCache } from '../../../common/graphql/mutation/cache-update';
 import { MutationResultData } from '../../../common/graphql/mutation/result';
 import { QueryResultData } from '../../../common/graphql/query/result';
 import { Entity } from '../../../models/api/model/entity';
@@ -45,6 +47,8 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         super(props);
 
         this.__renderForm = this.__renderForm.bind(this);
+        this.__handleCompletedMutation = this.__handleCompletedMutation.bind(this);
+        this.__updateCache = this.__updateCache.bind(this);
     }
 
     public render(): any {
@@ -67,10 +71,18 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         };
 
         return (
-            <Query query={fetch} variables={variables}>
+            <Query
+                query={fetch}
+                variables={variables}
+            >
                 {(query: QueryResult<QueryResultData<T>>) => {
                     return (
-                        <Mutation mutation={mutation}>
+                        <Mutation
+                            mutation={mutation}
+                            variables={variables}
+                            update={this.__updateCache}
+                            onCompleted={this.__handleCompletedMutation}
+                        >
                             {(fn: MutationFunc, mr: MutationResult<MutationResultData>) => {
                                 return this.__renderForm(query, fn, mr);
                             }}
@@ -103,8 +115,9 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         const handleSave = () => {
             mutate({
                 variables: {
+                    id,
                     projectId,
-                    input: { ...value, id },
+                    input: this.__getFormValues(),
                 },
             });
         };
@@ -165,6 +178,34 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
                 </Form>
             </Spin>
         );
+    }
+
+    private __handleCompletedMutation(): void {
+        this.props.form.resetFields();
+    }
+
+    private __updateCache(cache: DataProxy, mutationResult: FetchResult<MutationResultData>): void {
+        const {
+            id,
+            projectId,
+            fetch,
+        } = this.props;
+
+        updateFormCache(
+            'entity',
+            fetch,
+            { id, projectId },
+            this.__getFormValues(),
+            cache,
+            mutationResult,
+        );
+    }
+
+    private __getFormValues(): any {
+        const id = this.props.id;
+        const values = this.props.form.getFieldsValue();
+
+        return { ...values, id };
     }
 }
 

@@ -1,18 +1,20 @@
 import { DataProxy } from 'apollo-cache';
 import { DocumentNode } from 'apollo-link';
-import { FetchResult } from 'react-apollo';
+import { FetchResult, MutationUpdaterFn } from 'react-apollo';
 import { MutationResultData } from './result';
 
 export function updateFormCache(
     key: string,
     query: DocumentNode,
+    variables: any,
+    values: any,
     cache: DataProxy,
     mutationResult: FetchResult<MutationResultData>,
 ): void {
-    const q = cache.readQuery<any>({ query });
+    const q = cache.readQuery<any>({ query, variables });
     const current = q[key] as object;
-    const entity = mutationResult.data;
-    const next = { ...current, entity };
+    const metadata = mutationResult.data ? mutationResult.data.metadata : {};
+    const next = { ...current, ...metadata, ...values };
 
     cache.writeQuery<any>({
         query,
@@ -22,11 +24,16 @@ export function updateFormCache(
     });
 }
 
-export function createFormCacheUpdator(key: string, query: DocumentNode): any {
+export function createFormCacheUpdator(
+    key: string,
+    query: DocumentNode,
+    variables: any,
+    values?: any,
+): MutationUpdaterFn<any> {
     return (
         cache: DataProxy,
         mutationResult: FetchResult<MutationResultData>,
     ) => {
-        return updateFormCache(key, query, cache, mutationResult);
+        return updateFormCache(key, query, variables, values, cache, mutationResult);
     };
 }

@@ -9,7 +9,6 @@ export interface Props {
     title: string;
     touched?: boolean;
     valid?: boolean;
-    noButtons?: boolean;
     onBack?: () => void;
     onCancel?: () => void;
     onSave?: (input: any) => void;
@@ -32,7 +31,6 @@ export default class FormPanel extends React.PureComponent<Props> {
 
     private __renderButtons(): any {
         const {
-            noButtons,
             onCancel,
             onSave,
             onDelete,
@@ -40,39 +38,51 @@ export default class FormPanel extends React.PureComponent<Props> {
             valid,
         } = this.props;
 
-        if (noButtons) {
-            return null;
+        const buttons = [];
+
+        if (typeof onCancel === 'function') {
+            buttons.push(
+                <Button
+                    key="cancel"
+                    className={css.button}
+                    icon="close"
+                    disabled={!touched}
+                    onClick={onCancel}
+                >
+                    Cancel
+                </Button>,
+            );
         }
 
-        return [
-            <Button
-                key="cancel"
-                className={css.button}
-                icon="close"
-                disabled={!touched}
-                onClick={onCancel}
-            >
-                Cancel
-            </Button>,
-            <Button
-                key="save"
-                type="primary"
-                className={css.button}
-                icon="save"
-                disabled={!touched || !valid}
-                onClick={onSave}
-            >
+        if (typeof onSave === 'function') {
+            buttons.push(
+                <Button
+                    key="save"
+                    type="primary"
+                    className={css.button}
+                    icon="save"
+                    disabled={!touched || !valid}
+                    onClick={onSave}
+                >
                 Save
-            </Button>,
-            <Button
-                key="delete"
-                type="danger"
-                className={css.button}
-                icon="delete"
-                onClick={onDelete}
-            >
-                Delete
-            </Button>,
-        ];
+                </Button>,
+            );
+        }
+
+        if (typeof onDelete === 'function') {
+            buttons.push(
+                <Button
+                    key="delete"
+                    type="danger"
+                    className={css.button}
+                    icon="delete"
+                    onClick={onDelete}
+                >
+                    Delete
+                </Button>,
+            );
+        }
+
+        return buttons;
     }
 }

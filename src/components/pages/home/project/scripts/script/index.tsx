@@ -36,10 +36,10 @@ const createScriptMutation = gql`
 `;
 
 const updateScriptMutation = gql`
-    mutation updateScriptMutation($projectId: String!, $input: Script!) {
-        metadata(projectId: $projectId, input: $input) @rest(
+    mutation updateScriptMutation($projectId: String!, $id: String!, $input: Script!) {
+        metadata(projectId: $projectId, id: $id, input: $input) @rest(
             method: "PUT",
-            path: "projects/{args.projectId}/scripts/{args.input.id}"
+            path: "projects/{args.projectId}/scripts/{args.id}"
         ) {
             id,
             rev
