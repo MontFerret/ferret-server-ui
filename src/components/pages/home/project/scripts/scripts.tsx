@@ -1,4 +1,4 @@
-import { Card, notification } from 'antd';
+import { Button, Card, notification } from 'antd';
 import gql from 'graphql-tag';
 import isArray from 'lodash/isArray';
 import React, { Fragment } from 'react';
@@ -53,6 +53,7 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                 <Card>
                     <PageHeader
                         title="Scripts"
+                        extra={this.__renderButtons()}
                     />
                     <Query
                         query={findScriptsQuery}
@@ -89,5 +90,13 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
     private __loadMoreScripts(q: UrlQuery): any {
         this.navigate(this.getPath(), q.pagination);
+    }
+
+    private __renderButtons(): any {
+        return [
+            <Button key="create">
+                Create
+            </Button>,
+        ];
     }
 }

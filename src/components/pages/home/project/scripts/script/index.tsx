@@ -65,7 +65,12 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
             return script ? script.name : '';
         };
         const onBack = () => {
-            this.navigateBack(1);
+            this.navigate(this.slicePathBack(1));
+        };
+        const onCreate = (id: string) => {
+            const str = this.slicePathBack(1);
+
+            this.navigate(`${str}/${id}`);
         };
 
         return (
@@ -76,6 +81,7 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
                 fetch={getScriptQuery}
                 create={createScriptMutation}
                 update={updateScriptMutation}
+                onCreate={onCreate}
                 onBack={onBack}
             >
                 {({
@@ -116,15 +122,18 @@ export default class ScriptDetailsPage extends Page<Params, Props> {
                                             label="Query"
                                         >
                                             {getFieldDecorator('execution.query', {
-                                                initialValue: get(value, 'execution.query'),
+                                                initialValue: get(value, 'execution.query', ''),
                                                 rules: [
                                                     {
                                                         required: true,
                                                         message: 'Input script query',
                                                     },
+                                                    {
+                                                        min: 8,
+                                                    },
                                                 ],
                                             })(
-                                                <TextArea rows={10} />,
+                                                <TextArea rows={10} minLength={8} required />,
                                             )}
                                         </Form.Item>
                                     </fieldset>

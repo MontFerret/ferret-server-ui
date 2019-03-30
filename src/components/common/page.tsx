@@ -74,11 +74,10 @@ export abstract class Page<
         this.props.history.push(`${path}?${qs.stringify(query)}`);
     }
 
-    public navigateBack(num: number): void {
+    public slicePathBack(num: number): string {
         const segments = this.props.match.url.split('/');
-        const str = segments.slice(0, segments.length - num).join('/');
 
-        this.navigate(str);
+        return segments.slice(0, segments.length - num).join('/');
     }
 
     public goBack(): void {
