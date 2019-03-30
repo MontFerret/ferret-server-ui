@@ -53,7 +53,6 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                 <Card>
                     <PageHeader
                         title="Scripts"
-                        extra={this.__renderButtons()}
                     />
                     <Query
                         query={findScriptsQuery}
