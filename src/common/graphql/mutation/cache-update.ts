@@ -9,10 +9,10 @@ export function updateFormCache(
     variables: any,
     values: any,
     cache: DataProxy,
-    mutationResult: FetchResult<MutationResultData>
+    mutationResult: FetchResult<MutationResultData>,
 ): void {
     // not new item
-    if (values.id == null) {
+    if (values.id != null) {
         const q = cache.readQuery<any>({ query, variables });
         const current = q[key] as object;
         const metadata = mutationResult.data ? mutationResult.data.output : {};
@@ -31,11 +31,11 @@ export function createFormCacheUpdator(
     key: string,
     query: DocumentNode,
     variables: any,
-    values?: any
+    values?: any,
 ): MutationUpdaterFn<any> {
     return (
         cache: DataProxy,
-        mutationResult: FetchResult<MutationResultData>
+        mutationResult: FetchResult<MutationResultData>,
     ) => {
         return updateFormCache(
             key,
@@ -43,7 +43,7 @@ export function createFormCacheUpdator(
             variables,
             values,
             cache,
-            mutationResult
+            mutationResult,
         );
     };
 }

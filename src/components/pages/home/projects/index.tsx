@@ -51,10 +51,10 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         this.__handleListItemClick = this.__handleListItemClick.bind(this);
         this.__handleNewProjectClick = this.__handleNewProjectClick.bind(this);
         this.__handleNewProjectCreate = this.__handleNewProjectCreate.bind(
-            this
+            this,
         );
         this.__handleNewProjectCancel = this.__handleNewProjectCancel.bind(
-            this
+            this,
         );
     }
 
@@ -116,7 +116,7 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
 
     private __renderForm(
         fn: MutationFunc,
-        { error, loading, data }: MutationResult<MutationResultData>
+        { error, loading, data }: MutationResult<MutationResultData>,
     ): any {
         const { form } = this.state;
         const onCreate = (project: ProjectCreate) => {

@@ -18,14 +18,14 @@ const css = require('./index.module.scss');
 
 const { Sider, Content } = Layout;
 const LoadableProjectDashboardPage = React.lazy(
-    () => import('./dashboard/index') as any
+    () => import('./dashboard/index') as any,
 );
 const LoadableProjectDataPage = React.lazy(() => import('./data/index') as any);
 const LoadableProjectScriptsPage = React.lazy(
-    () => import('./scripts/index') as any
+    () => import('./scripts/index') as any,
 );
 const LoadableProjectSettingsPage = React.lazy(
-    () => import('./settings/index') as any
+    () => import('./settings/index') as any,
 );
 
 interface ProjectQueryResult {
@@ -54,7 +54,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
         });
 
         this.__handleMenuCollapseChange = this.__handleMenuCollapseChange.bind(
-            this
+            this,
         );
         this.__routes = [
             {
@@ -123,7 +123,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
                                         </Link>
                                     </Menu.Item>
                                 );
-                            }
+                            },
                         )}
                     </Menu>
                     <Menu theme="dark" className={css.bottomMenu}>
@@ -151,7 +151,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
         const { location } = this.props;
 
         const found = this.__routes.findIndex(i =>
-            startsWith(location.pathname, i.path)
+            startsWith(location.pathname, i.path),
         );
 
         return found ? found.toString() : '0';

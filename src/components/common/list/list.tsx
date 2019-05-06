@@ -28,7 +28,7 @@ export class DataList extends React.Component<Props> {
 
         this.__renderItem = this.__renderItem.bind(this);
         this.__handlePaginationChange = this.__handlePaginationChange.bind(
-            this
+            this,
         );
     }
 

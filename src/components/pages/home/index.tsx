@@ -4,10 +4,10 @@ import Loader from '../../common/loader/loader';
 import { Page, PageProps, PageState } from '../../common/page';
 
 const LoadableProjectsListPage = React.lazy(
-    () => import('./projects/index') as any
+    () => import('./projects/index') as any,
 );
 const LoadableProjectDetailsPage = React.lazy(
-    () => import('./project/index') as any
+    () => import('./project/index') as any,
 );
 
 export interface State extends PageState {

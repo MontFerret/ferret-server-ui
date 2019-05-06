@@ -61,7 +61,7 @@ class NewProjectForm extends React.Component<InnerProps> {
                                 <Input
                                     disabled={loading}
                                     placeholder="Project name"
-                                />
+                                />,
                             )}
                         </Form.Item>
                         <Form.Item label="Description">
@@ -76,7 +76,7 @@ class NewProjectForm extends React.Component<InnerProps> {
                                 <TextArea
                                     disabled={loading}
                                     placeholder="Project name"
-                                />
+                                />,
                             )}
                         </Form.Item>
                     </Form>
@@ -104,5 +104,5 @@ class NewProjectForm extends React.Component<InnerProps> {
 }
 
 export default (Form.create({ name: 'new_project_form' })(
-    NewProjectForm
+    NewProjectForm,
 ) as any) as React.SFC<Props>;

@@ -61,7 +61,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
         this.__handleCloneClick = this.__handleCloneClick.bind(this);
         this.__handleDeleteClick = this.__handleDeleteClick.bind(this);
         this.__handlePaginationChange = this.__handlePaginationChange.bind(
-            this
+            this,
         );
     }
 
@@ -103,7 +103,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={onCreate}
             >
                 Create
-            </Button>
+            </Button>,
         );
 
         buttons.push(
@@ -115,7 +115,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={this.__handleCloneClick}
             >
                 Clone
-            </Button>
+            </Button>,
         );
 
         buttons.push(
@@ -127,7 +127,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={this.__handleDeleteClick}
             >
                 Delete
-            </Button>
+            </Button>,
         );
 
         return buttons;
@@ -136,7 +136,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
     private __handleTableChange(
         _: PaginationConfig,
         __: Record<any, string[]>,
-        sorter: SorterResult<any>
+        sorter: SorterResult<any>,
     ): void {
         let sorting;
 

@@ -26,7 +26,7 @@ export class AppComponent extends React.PureComponent<Props> {
 
 export function create(
     history: History,
-    graphql: ApolloClient<any>
+    graphql: ApolloClient<any>,
 ): React.ReactElement<any> {
     return <AppComponent history={history} graphql={graphql} />;
 }

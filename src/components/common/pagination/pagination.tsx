@@ -29,6 +29,7 @@ export const Pagination = React.memo<Props>(({ cursors, onChange }: Props) => {
         <ul className={cn('rc-pagination', css.pager)}>
             <li aria-disabled={!hasPrev}>
                 <Button
+                    className={css.left}
                     icon="left"
                     size="small"
                     onClick={onPrev}
@@ -37,6 +38,7 @@ export const Pagination = React.memo<Props>(({ cursors, onChange }: Props) => {
             </li>
             <li aria-disabled={!hasNext}>
                 <Button
+                    className={css.right}
                     icon="right"
                     size="small"
                     onClick={onNext}

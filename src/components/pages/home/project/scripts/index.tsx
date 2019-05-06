@@ -4,7 +4,7 @@ import { Page, PageProps } from '../../../../common/page';
 
 const LoadableScriptsListPage = React.lazy(() => import('./scripts') as any);
 const LoadableScriptDetailsPage = React.lazy(
-    () => import('./script/index') as any
+    () => import('./script/index') as any,
 );
 
 export type Params = never;

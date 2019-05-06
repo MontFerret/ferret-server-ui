@@ -60,7 +60,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
 
         this.__renderForm = this.__renderForm.bind(this);
         this.__handleCompletedMutation = this.__handleCompletedMutation.bind(
-            this
+            this,
         );
         this.__handleError = this.__handleError.bind(this);
         this.__updateCache = this.__updateCache.bind(this);
@@ -94,7 +94,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
                         >
                             {(
                                 fn: MutationFunc,
-                                mr: MutationResult<MutationResultData>
+                                mr: MutationResult<MutationResultData>,
                             ) => {
                                 return this.__renderForm(query, fn, mr);
                             }}
@@ -108,7 +108,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
     private __renderForm(
         qr: QueryResult<QueryResultData<T>>,
         mutate: MutationFunc,
-        mr: MutationResult<MutationResultData>
+        mr: MutationResult<MutationResultData>,
     ): any {
         const {
             id,
@@ -241,7 +241,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
 
     private __updateCache(
         cache: DataProxy,
-        mutationResult: FetchResult<MutationResultData>
+        mutationResult: FetchResult<MutationResultData>,
     ): void {
         const { projectId, fetch } = this.props;
         const id = mutationResult.data
@@ -254,7 +254,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
             { id, projectId },
             this.__getFormValues(),
             cache,
-            mutationResult
+            mutationResult,
         );
     }
 
@@ -267,5 +267,5 @@ class FormContainer<T extends Entity = any> extends React.Component<
 }
 
 export default (Form.create({ name: 'form_container ' })(
-    FormContainer
+    FormContainer,
 ) as any) as React.SFC<Props>;
