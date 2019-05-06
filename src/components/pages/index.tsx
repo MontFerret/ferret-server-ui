@@ -1,16 +1,12 @@
 import startsWith from 'lodash/startsWith';
 import React, { Suspense } from 'react';
-import {
-    Redirect,
-    Route,
-    Switch,
-} from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import Loader from '../common/loader/loader';
 import { Page, PageProps } from '../common/page';
 
-const LoadableErrorPage = React.lazy(() => import('./error/index'));
-const LoadableLoginPage = React.lazy(() => import('./login/index'));
-const LoadableHomePage = React.lazy(() => import('./home'));
+const LoadableErrorPage = React.lazy(() => import('./error/index') as any);
+const LoadableLoginPage = React.lazy(() => import('./login/index') as any);
+const LoadableHomePage = React.lazy(() => import('./home') as any);
 
 export interface Props extends PageProps {}
 
@@ -18,17 +14,15 @@ export class IndexPage extends Page<never, Props> {
     public render(): any {
         let redirect: any;
 
-        const {
-            location,
-        } = this.props;
+        const { location } = this.props;
 
         // if (data == null || data.isAuthenticated === false) {
         //     if (location.pathname !== '/login') {
         //         redirect = <Redirect to="/login"/>;
         //     }
-        // } else 
+        // } else
         if (startsWith(location.pathname, '/home') === false) {
-            redirect = <Redirect to="/home"/>;
+            redirect = <Redirect to="/home" />;
         }
 
         return (
@@ -40,7 +34,6 @@ export class IndexPage extends Page<never, Props> {
                     <Route path="/error" component={LoadableErrorPage} />
                 </Switch>
             </Suspense>
-
         );
     }
 }

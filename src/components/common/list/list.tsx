@@ -5,6 +5,7 @@ import React from 'react';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { Pagination } from '../../../common/models/query/pagination';
 import PageHeader from '../page-header/page-header';
+import { Pagination as Pager } from '../pagination/pagination';
 const css = require('./list.module.scss');
 
 export type ItemRenderer<T> = (item: T) => React.ReactElement;
@@ -14,7 +15,7 @@ export interface Props<T = any> {
     className?: string;
     grid?: ListGridType;
     loading?: boolean;
-    pagination: Pagination;
+    pagination?: Pagination;
     data?: T[];
     loadMore: LoadMoreHandler;
     renderItem: ItemRenderer<T>;
@@ -26,6 +27,9 @@ export class DataList extends React.Component<Props> {
         super(props);
 
         this.__renderItem = this.__renderItem.bind(this);
+        this.__handlePaginationChange = this.__handlePaginationChange.bind(
+            this
+        );
     }
 
     public render(): any {
@@ -37,34 +41,33 @@ export class DataList extends React.Component<Props> {
             hidePanel,
             grid,
         } = this.props;
-        const p = {
-            current: pagination.page,
-            defaultCurrent: 1,
-            pageSize: pagination.size,
-            hideOnSinglePage: true,
-        };
 
-        const panel = hidePanel !== true ? <PageHeader title={title || ''} /> : null;
+        const panel =
+            hidePanel !== true ? <PageHeader title={title || ''} /> : null;
 
         return (
-            <div>
+            <React.Fragment>
                 {panel}
                 <List
                     grid={grid}
                     className={cn(css.list, className)}
                     dataSource={data}
-                    pagination={p}
+                    pagination={false}
                     renderItem={this.__renderItem}
                 />
-            </div>
+                <Pager
+                    cursors={pagination ? pagination.cursors : undefined}
+                    onChange={this.__handlePaginationChange}
+                />
+            </React.Fragment>
         );
     }
 
     private __renderItem(item: any): any {
-        return (
-            <List.Item>
-                {this.props.renderItem(item)}
-            </List.Item>
-        );
+        return <List.Item>{this.props.renderItem(item)}</List.Item>;
+    }
+
+    private __handlePaginationChange(cursor: number): void {
+        this.props.loadMore({ cursor });
     }
 }

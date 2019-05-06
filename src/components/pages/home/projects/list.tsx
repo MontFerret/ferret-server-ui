@@ -1,15 +1,14 @@
 import { Col, Row } from 'antd';
 import React, { Fragment } from 'react';
+import { SearchResult } from '../../../../common/graphql/query/result';
 import { LoadMoreHandler } from '../../../../common/models/query/loader';
-import { Pagination } from '../../../../common/models/query/pagination';
 import { ProjectOutput } from '../../../../models/api/model/projectOutput';
 import { DataList } from '../../../common/list/list';
 import { ListItem } from './list-item';
 
 export interface Props {
     loading: boolean;
-    data?: ProjectOutput[];
-    pagination: Pagination;
+    result?: SearchResult<ProjectOutput>;
     loadMore: LoadMoreHandler;
     onItemClick: (id: string) => void;
 }
@@ -22,29 +21,18 @@ export default class PorjectsList extends React.Component<Props> {
     }
 
     public render(): any {
-        const {
-            data,
-            loading,
-            pagination,
-            loadMore,
-        } = this.props;
+        const { result, loading, loadMore } = this.props;
 
         return (
             <Fragment>
-                <Row
-                    type="flex"
-                    justify="space-around"
-                    align="middle"
-                >
-                    <Col
-                        lg={20}
-                    >
+                <Row type="flex" justify="space-around" align="middle">
+                    <Col lg={20}>
                         <DataList
                             hidePanel={true}
                             grid={{ gutter: 16, column: 4 }}
-                            data={data}
+                            data={result ? result.data : undefined}
                             loading={loading}
-                            pagination={pagination}
+                            pagination={result ? result.paging : undefined}
                             loadMore={loadMore}
                             renderItem={this.__renderItem}
                         />
@@ -55,11 +43,6 @@ export default class PorjectsList extends React.Component<Props> {
     }
 
     private __renderItem(item: ProjectOutput): any {
-        return (
-            <ListItem
-                item={item}
-                onClick={this.props.onItemClick}
-            />
-        );
+        return <ListItem item={item} onClick={this.props.onItemClick} />;
     }
 }

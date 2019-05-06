@@ -1,10 +1,5 @@
 import { Button, Card, Table } from 'antd';
-import {
-    ColumnProps,
-    PaginationConfig,
-    SorterResult,
-} from 'antd/lib/table';
-import get from 'lodash/get';
+import { ColumnProps, PaginationConfig, SorterResult } from 'antd/lib/table';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import { Entity } from '../../../common/models/entity';
@@ -12,6 +7,9 @@ import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
 import { Pagination } from '../../../common/models/query/pagination';
 import PageHeader from '../page-header/page-header';
+import { Pagination as Pager } from '../pagination/pagination';
+
+const css = require('./table.module.scss');
 
 export type Column<T> = ColumnProps<T>;
 
@@ -20,7 +18,7 @@ export interface Props<T extends Entity> {
     loading?: boolean;
     // tslint:disable-next-line:prefer-array-literal
     columns: Array<Column<T>>;
-    pagination: Pagination;
+    pagination?: Pagination;
     data?: T[];
     loadMore: LoadMoreHandler;
     onChange?: (selected: string[]) => void;
@@ -59,52 +57,41 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 disabled: record.name === 'Disabled User', // Column configuration not to be checked
             }),
         };
+        this.__handleTableChange = this.__handleTableChange.bind(this);
         this.__handleCloneClick = this.__handleCloneClick.bind(this);
         this.__handleDeleteClick = this.__handleDeleteClick.bind(this);
+        this.__handlePaginationChange = this.__handlePaginationChange.bind(
+            this
+        );
     }
 
     public render(): any {
-        const {
-            columns,
-            data,
-            loading,
-            pagination,
-            title,
-        } = this.props;
-        const p = {
-            current: pagination.page,
-            defaultCurrent: 1,
-            pageSize: pagination.size,
-            total: get(data, 'count', 0),
-            showSizeChanger: true,
-        };
+        const { columns, data, loading, pagination, title } = this.props;
 
         return (
             <Card>
-                <PageHeader
-                    title={title}
-                    extra={this.__renderButtons()}
-                />
+                <PageHeader title={title} extra={this.__renderButtons()} />
                 <Table
+                    className={css.table}
                     rowKey={this.__getRowKey}
                     columns={columns}
                     dataSource={data}
-                    pagination={p}
+                    pagination={false}
                     loading={loading}
                     rowSelection={this.__handleRowSelection}
                     onChange={this.__handleTableChange}
+                />
+                <Pager
+                    cursors={pagination ? pagination.cursors : undefined}
+                    onChange={this.__handlePaginationChange}
                 />
             </Card>
         );
     }
 
     private __renderButtons(): any[] {
-        const {
-            selectedRows,
-        } = this.state;
-        const {
-            onCreate,
-        } = this.props;
+        const { selectedRows } = this.state;
+        const { onCreate } = this.props;
         const buttons = [];
 
         buttons.push(
@@ -116,7 +103,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={onCreate}
             >
                 Create
-            </Button>,
+            </Button>
         );
 
         buttons.push(
@@ -128,7 +115,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={this.__handleCloneClick}
             >
                 Clone
-            </Button>,
+            </Button>
         );
 
         buttons.push(
@@ -140,21 +127,24 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                 onClick={this.__handleDeleteClick}
             >
                 Delete
-            </Button>,
+            </Button>
         );
 
         return buttons;
     }
 
     private __handleTableChange(
-        pagination: PaginationConfig,
-        _: Record<any, string[]>,
-        sorter: SorterResult<any>,
+        _: PaginationConfig,
+        __: Record<any, string[]>,
+        sorter: SorterResult<any>
     ): void {
         let sorting;
 
         if (sorter != null) {
-            if (isEmpty(sorter.field) === false && isEmpty(sorter.order) === false) {
+            if (
+                isEmpty(sorter.field) === false &&
+                isEmpty(sorter.order) === false
+            ) {
                 sorting = {
                     columns: [
                         {
@@ -168,10 +158,12 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
 
         this.props.loadMore({
             sorting,
-            pagination: {
-                size: pagination.pageSize || 10,
-                page: pagination.current || 1,
-            },
+        });
+    }
+
+    private __handlePaginationChange(cursor: number): void {
+        this.props.loadMore({
+            cursor,
         });
     }
 

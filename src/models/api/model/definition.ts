@@ -11,9 +11,9 @@
  */
 
 /**
- * The properties that are allowed when creating or updating a Execution.
+ * Common entity definition
  */
-export interface ExecutionInput {
-    scriptID: string;
-    params?: { [key: string]: any };
+export interface Definition {
+    name: string;
+    description?: string;
 }

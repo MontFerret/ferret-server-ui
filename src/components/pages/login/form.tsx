@@ -1,9 +1,4 @@
-import {
-    Button,
-    Form,
-    Icon,
-    Input,
-} from 'antd';
+import { Button, Form, Icon, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import React from 'react';
 import { Credentials } from '../../../models/auth/credentials';
@@ -15,13 +10,15 @@ function hasErrors(fieldsError: any): boolean {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-interface Props extends FormComponentProps {
+interface InnerProps extends Props, FormComponentProps {}
+
+export interface Props {
     username: string;
     onSubmit: (cred: Credentials) => void;
 }
 
-class LoginForm extends React.Component<Props> {
-    constructor(props: Props) {
+class LoginForm extends React.Component<InnerProps> {
+    constructor(props: InnerProps) {
         super(props);
 
         this.__onSubmit = this.__onSubmit.bind(this);
@@ -55,20 +52,24 @@ class LoginForm extends React.Component<Props> {
         } = this.props.form;
 
         // Only show error after a field is touched.
-        const userNameError = isFieldTouched('username') && getFieldError('username');
-        const passwordError = isFieldTouched('password') && getFieldError('password');
+        const userNameError =
+            isFieldTouched('username') && getFieldError('username');
+        const passwordError =
+            isFieldTouched('password') && getFieldError('password');
 
         return (
-            <Form
-                className={css.form}
-                onSubmit={this.__onSubmit}
-            >
+            <Form className={css.form} onSubmit={this.__onSubmit}>
                 <FormItem
                     validateStatus={userNameError ? 'error' : 'success'}
                     help={userNameError || ''}
                 >
                     {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input your username!',
+                            },
+                        ],
                     })(this.__renderUsernameInput())}
                 </FormItem>
 
@@ -77,7 +78,12 @@ class LoginForm extends React.Component<Props> {
                     help={passwordError || ''}
                 >
                     {getFieldDecorator('password', {
-                        rules: [{ required: true, message: 'Please input your password!' }],
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input your password!',
+                            },
+                        ],
                     })(this.__renderPasswordInput())}
                 </FormItem>
 
@@ -88,7 +94,7 @@ class LoginForm extends React.Component<Props> {
                         className={css.button}
                         disabled={hasErrors(getFieldsError())}
                     >
-        Log in
+                        Log in
                     </Button>
                 </FormItem>
             </Form>
@@ -106,4 +112,4 @@ class LoginForm extends React.Component<Props> {
     }
 }
 
-export default Form.create()(LoginForm);
+export default (Form.create()(LoginForm) as any) as React.SFC<Props>;

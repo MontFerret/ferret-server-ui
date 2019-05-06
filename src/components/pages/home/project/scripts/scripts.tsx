@@ -1,9 +1,7 @@
 import { notification } from 'antd';
-import isArray from 'lodash/isArray';
 import React from 'react';
 import { Query, QueryResult } from 'react-apollo';
 import { QueryResultDataList } from '../.../../../../../../common/graphql/query/result';
-import { fromQuery } from '../../../../../common/models/query/pagination';
 import { Query as UrlQuery } from '../../../../../common/models/query/query';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
 import { findQuery } from '../../../../../queries/script';
@@ -26,10 +24,9 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
     public render(): any {
         const { projectId } = this.props;
-        const urlQuery = fromQuery(this.getQuery());
         const variables = {
             projectId,
-            query: urlQuery,
+            query: this.getQuery(),
         };
 
         return (
@@ -43,10 +40,11 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         );
     }
 
-    private __renderScripts({ data, loading, error }: QueryResult<QueryResultDataList<ScriptOutput>>): any {
-        const pagination = fromQuery(this.getQuery());
-        const scripts = data ? data.entities : undefined;
-
+    private __renderScripts({
+        data,
+        loading,
+        error,
+    }: QueryResult<QueryResultDataList<ScriptOutput>>): any {
         if (error != null) {
             notification.error({
                 message: error.message,
@@ -57,9 +55,8 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         return (
             <Table
                 baseUrl={this.props.location.pathname}
-                data={isArray(scripts) ? scripts : undefined}
+                result={data ? data.output : undefined}
                 loading={loading}
-                pagination={pagination}
                 loadMore={this.__loadMoreScripts}
                 onCreate={this.__handleCreate}
             />
@@ -67,7 +64,7 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
     }
 
     private __loadMoreScripts(q: UrlQuery): any {
-        this.navigate(this.getPath(), q.pagination);
+        this.navigate(this.getPath(), q);
     }
 
     private __handleCreate(): void {

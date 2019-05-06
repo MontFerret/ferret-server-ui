@@ -6,7 +6,8 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Query } from '../../common/models/query/query';
 
-export interface PageProps<TParams = never> extends RouteComponentProps<TParams> {}
+export interface PageProps<TParams = never>
+    extends RouteComponentProps<TParams> {}
 
 export interface PageState {
     query: Query;
@@ -18,7 +19,9 @@ export abstract class Page<
     TState extends PageState = { query: Query }
 > extends React.PureComponent<TProps, TState> {
     public static parseQuery(props: PageProps<any>): Query {
-        return qs.parse(get(props, 'location.search'));
+        const search = get(props, 'location.search', '');
+
+        return qs.parse(search, { ignoreQueryPrefix: true });
     }
 
     public static stringifyQuery(q: Query): string {
@@ -71,7 +74,7 @@ export abstract class Page<
             return;
         }
 
-        this.props.history.push(`${path}?${qs.stringify(query)}`);
+        this.props.history.push(`${path}?${Page.stringifyQuery(query)}`);
     }
 
     public slicePathBack(num: number): string {

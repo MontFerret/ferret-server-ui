@@ -17,7 +17,7 @@ export class AppComponent extends React.PureComponent<Props> {
         return (
             <ApolloProvider client={graphql}>
                 <Router history={history}>
-                    <Route path="/" component={IndexPage} />
+                    <Route path="/" component={IndexPage as any} />
                 </Router>
             </ApolloProvider>
         );
@@ -26,7 +26,7 @@ export class AppComponent extends React.PureComponent<Props> {
 
 export function create(
     history: History,
-    graphql: ApolloClient<any>,
+    graphql: ApolloClient<any>
 ): React.ReactElement<any> {
     return <AppComponent history={history} graphql={graphql} />;
 }
