@@ -8,21 +8,21 @@ const css = require('./pagination.module.scss');
 
 export interface Props {
     cursors?: Cursors;
-    onChange: (cursor: number) => void;
+    onChange: (cursor: string) => void;
 }
 
 export const Pagination = React.memo<Props>(({ cursors, onChange }: Props) => {
     const hasPrev =
-        cursors != null && cursors.before != null && cursors.before > 0;
+        cursors != null && cursors.before != null && cursors.before !== '';
     const onPrev =
         cursors && hasPrev
-            ? onChange.bind(null, cursors.before as number)
+            ? onChange.bind(null, cursors.before as string)
             : undefined;
     const hasNext =
-        cursors != null && cursors.after != null && cursors.after > 0;
+        cursors != null && cursors.after != null && cursors.after !== '';
     const onNext =
         cursors && hasNext
-            ? onChange.bind(null, cursors.after as number)
+            ? onChange.bind(null, cursors.after as string)
             : undefined;
 
     return (

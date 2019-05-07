@@ -67,7 +67,7 @@ export class DataList extends React.Component<Props> {
         return <List.Item>{this.props.renderItem(item)}</List.Item>;
     }
 
-    private __handlePaginationChange(cursor: number): void {
+    private __handlePaginationChange(cursor: string): void {
         this.props.loadMore({ cursor });
     }
 }

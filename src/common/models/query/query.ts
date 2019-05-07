@@ -3,7 +3,7 @@ import qs from 'qs';
 import { Sorting } from './sorting';
 
 export interface Query {
-    readonly cursor?: number;
+    readonly cursor?: string;
     readonly sorting?: Sorting;
 }
 

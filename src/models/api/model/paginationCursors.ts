@@ -11,6 +11,6 @@
  */
 
 export interface PaginationCursors {
-    before?: number;
-    after?: number;
+    before?: string;
+    after?: string;
 }

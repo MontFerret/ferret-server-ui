@@ -161,7 +161,7 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
         });
     }
 
-    private __handlePaginationChange(cursor: number): void {
+    private __handlePaginationChange(cursor: string): void {
         this.props.loadMore({
             cursor,
         });
