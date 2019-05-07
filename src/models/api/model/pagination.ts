@@ -9,11 +9,9 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PaginationCursors } from './paginationCursors';
 
-/**
- * The properties that are allowed when creating or updating a Execution.
- */
-export interface ExecutionInput {
-    scriptID: string;
-    params?: { [key: string]: any };
+export interface Pagination {
+    cursors: PaginationCursors;
+    count: number;
 }

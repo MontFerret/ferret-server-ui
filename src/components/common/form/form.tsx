@@ -5,7 +5,13 @@ import { ApolloError } from 'apollo-client';
 import { DocumentNode, FetchResult } from 'apollo-link';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement } from 'react';
-import { Mutation, MutationFunc, MutationResult, Query, QueryResult } from 'react-apollo';
+import {
+    Mutation,
+    MutationFunc,
+    MutationResult,
+    Query,
+    QueryResult,
+} from 'react-apollo';
 import isFormValid from '../../../common/form/is-valid';
 import { updateFormCache } from '../../../common/graphql/mutation/cache-update';
 import { MutationResultData } from '../../../common/graphql/mutation/result';
@@ -45,29 +51,25 @@ interface State {
     refresh: boolean;
 }
 
-class FormContainer<T extends Entity = any> extends React.Component<InnerProps, State> {
+class FormContainer<T extends Entity = any> extends React.Component<
+    InnerProps,
+    State
+> {
     constructor(props: InnerProps) {
         super(props);
 
         this.__renderForm = this.__renderForm.bind(this);
-        this.__handleCompletedMutation = this.__handleCompletedMutation.bind(this);
+        this.__handleCompletedMutation = this.__handleCompletedMutation.bind(
+            this,
+        );
         this.__handleError = this.__handleError.bind(this);
         this.__updateCache = this.__updateCache.bind(this);
     }
 
     public render(): any {
-        const {
-            id,
-            projectId,
-            fetch,
-            create,
-            update,
-        } = this.props;
+        const { id, projectId, fetch, create, update } = this.props;
 
-        const mutation = !isEmpty(id) && id !== 'new'
-            ? update
-            : create
-        ;
+        const mutation = !isEmpty(id) && id !== 'new' ? update : create;
 
         const variables = {
             id,
@@ -90,7 +92,10 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
                             onCompleted={this.__handleCompletedMutation}
                             onError={this.__handleError}
                         >
-                            {(fn: MutationFunc, mr: MutationResult<MutationResultData>) => {
+                            {(
+                                fn: MutationFunc,
+                                mr: MutationResult<MutationResultData>,
+                            ) => {
                                 return this.__renderForm(query, fn, mr);
                             }}
                         </Mutation>
@@ -117,11 +122,12 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         } = this.props;
 
         const loading = qr.loading || mr.loading;
-        const value = qr.data ? qr.data.entity : undefined;
+        const value = qr.data ? qr.data.output : undefined;
         const error = qr.error || mr.error;
         const touched = form.isFieldsTouched();
         const valid = isFormValid(form.getFieldsError());
-        const titleStr = typeof title === 'string' ? title : title(value, loading, error);
+        const titleStr =
+            typeof title === 'string' ? title : title(value, loading, error);
         const handleSave = () => {
             this.props.form.validateFieldsAndScroll((err, values) => {
                 if (!err) {
@@ -143,17 +149,20 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
 
         if (!this.__isNew() && del != null) {
             handleDelete = () => {
-                mr.client.mutate({
-                    mutation: del,
-                    variables: {
-                        id,
-                        projectId,
-                    },
-                }).then((_: FetchResult) => {
-                    if (typeof onDelete === 'function') {
-                        onDelete();
-                    }
-                }).catch(this.__handleError);
+                mr.client
+                    .mutate({
+                        mutation: del,
+                        variables: {
+                            id,
+                            projectId,
+                        },
+                    })
+                    .then((_: FetchResult) => {
+                        if (typeof onDelete === 'function') {
+                            onDelete();
+                        }
+                    })
+                    .catch(this.__handleError);
             };
         }
 
@@ -168,9 +177,10 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         let resolvedChildren = c;
 
         if (c != null && (c as ReactElement).type != null) {
-            resolvedChildren = (c as ReactElement).type === Fragment
-                ? (c as ReactElement).props.children
-                : children;
+            resolvedChildren =
+                (c as ReactElement).type === Fragment
+                    ? (c as ReactElement).props.children
+                    : children;
         }
 
         return (
@@ -181,10 +191,7 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
 
                         if (idx === 0) {
                             return (
-                                <Card
-                                    key={key}
-                                    className={css.section}
-                                >
+                                <Card key={key} className={css.section}>
                                     <Panel
                                         title={titleStr}
                                         touched={touched}
@@ -200,10 +207,7 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
                         }
 
                         return (
-                            <Card
-                                key={key}
-                                className={css.section}
-                            >
+                            <Card key={key} className={css.section}>
                                 {child}
                             </Card>
                         );
@@ -220,15 +224,12 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
     }
 
     private __handleCompletedMutation(data: MutationResultData): void {
-        const {
-            form,
-            onCreate,
-        } = this.props;
+        const { form, onCreate } = this.props;
 
         form.resetFields();
 
         if (this.__isNew() && typeof onCreate === 'function') {
-            onCreate(data.metadata.id);
+            onCreate(data.output.id);
         }
     }
 
@@ -238,17 +239,17 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
         });
     }
 
-    private __updateCache(cache: DataProxy, mutationResult: FetchResult<MutationResultData>): void {
-        const {
-            projectId,
-            fetch,
-        } = this.props;
+    private __updateCache(
+        cache: DataProxy,
+        mutationResult: FetchResult<MutationResultData>,
+    ): void {
+        const { projectId, fetch } = this.props;
         const id = mutationResult.data
-            ? mutationResult.data.metadata.id
+            ? mutationResult.data.output.id
             : this.props.id;
 
         updateFormCache(
-            'entity',
+            'output',
             fetch,
             { id, projectId },
             this.__getFormValues(),
@@ -265,4 +266,6 @@ class FormContainer<T extends Entity = any> extends React.Component<InnerProps, 
     }
 }
 
-export default Form.create<Props>({ name: 'form_container ' })(FormContainer);
+export default (Form.create({ name: 'form_container ' })(
+    FormContainer,
+) as any) as React.SFC<Props>;

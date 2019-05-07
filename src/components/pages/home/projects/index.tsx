@@ -1,12 +1,16 @@
 import { Button, Layout } from 'antd';
-import isArray from 'lodash/isArray';
 import React from 'react';
-import { Mutation, MutationFunc, MutationResult, Query, QueryResult } from 'react-apollo';
+import {
+    Mutation,
+    MutationFunc,
+    MutationResult,
+    Query,
+    QueryResult,
+} from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { MutationResultData } from '../../../../common/graphql/mutation/result';
 import { QueryResultDataList } from '../../../../common/graphql/query/result';
 import { LoadMoreHandler } from '../../../../common/models/query/loader';
-import { fromQuery } from '../../../../common/models/query/pagination';
 import { Query as UrlQuery } from '../../../../common/models/query/query';
 import { ProjectCreate } from '../../../../models/api/model/projectCreate';
 import { ProjectOutput } from '../../../../models/api/model/projectOutput';
@@ -17,10 +21,6 @@ import List from './list';
 const css = require('./index.module.scss');
 
 const { Header, Content } = Layout;
-
-interface QueryVariables {
-    criteria: UrlQuery;
-}
 
 enum FormState {
     Hidden = 0,
@@ -36,15 +36,6 @@ export type Params = never;
 export interface Props extends PageProps<Params> {}
 
 export default class ProjectsIndexPage extends Page<Params, Props, State> {
-    public static makeQueryVariables(urlQuery: UrlQuery): QueryVariables {
-        return {
-            criteria: {
-                pagination: fromQuery(urlQuery),
-                // sorting: SORTING,
-            },
-        };
-    }
-
     private readonly __loadMore: LoadMoreHandler;
 
     constructor(props: Props) {
@@ -53,14 +44,18 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         });
 
         this.__loadMore = (q: UrlQuery) => {
-            this.navigate(this.getPath(), q.pagination);
+            this.navigate(this.getPath(), q);
         };
         this.__renderList = this.__renderList.bind(this);
         this.__renderForm = this.__renderForm.bind(this);
         this.__handleListItemClick = this.__handleListItemClick.bind(this);
         this.__handleNewProjectClick = this.__handleNewProjectClick.bind(this);
-        this.__handleNewProjectCreate = this.__handleNewProjectCreate.bind(this);
-        this.__handleNewProjectCancel = this.__handleNewProjectCancel.bind(this);
+        this.__handleNewProjectCreate = this.__handleNewProjectCreate.bind(
+            this,
+        );
+        this.__handleNewProjectCancel = this.__handleNewProjectCancel.bind(
+            this,
+        );
     }
 
     public render(): any {
@@ -73,7 +68,9 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
             <Layout className={css.layout}>
                 <Header className={css.header}>
                     <div>
-                        <Link to={match.url} className={css.logo}>Browse projects</Link>
+                        <Link to={match.url} className={css.logo}>
+                            Browse projects
+                        </Link>
                         <Button
                             className={css.createBtn}
                             type="primary"
@@ -101,22 +98,26 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         );
     }
 
-    private __renderList({ data, loading }: QueryResult<QueryResultDataList<ProjectOutput>>): any {
-        const pagination = fromQuery(this.getQuery());
-        const projects = data ? data.entities : undefined;
+    private __renderList({
+        data,
+        loading,
+    }: QueryResult<QueryResultDataList<ProjectOutput>>): any {
+        const output = data ? data.output : undefined;
 
         return (
             <List
-                data={isArray(projects) ? projects : undefined}
+                result={output}
                 loading={loading}
-                pagination={pagination}
                 loadMore={this.__loadMore}
                 onItemClick={this.__handleListItemClick}
             />
         );
     }
 
-    private __renderForm(fn: MutationFunc, { error, loading, data }: MutationResult<MutationResultData>): any {
+    private __renderForm(
+        fn: MutationFunc,
+        { error, loading, data }: MutationResult<MutationResultData>,
+    ): any {
         const { form } = this.state;
         const onCreate = (project: ProjectCreate) => {
             fn({
@@ -125,9 +126,9 @@ export default class ProjectsIndexPage extends Page<Params, Props, State> {
         };
 
         if (!loading && !error && data) {
-            this.__handleListItemClick(data.metadata.id);
+            this.__handleListItemClick(data.output.id);
 
-            return;
+            return null;
         }
 
         return (

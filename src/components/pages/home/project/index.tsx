@@ -2,7 +2,13 @@ import { Breadcrumb, Col, Icon, Layout, Menu, Row } from 'antd';
 import startsWith from 'lodash/startsWith';
 import React, { Suspense } from 'react';
 import { Query, QueryResult } from 'react-apollo';
-import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import {
+    Link,
+    Redirect,
+    Route,
+    RouteComponentProps,
+    Switch,
+} from 'react-router-dom';
 import { Route as RouteConfig } from '../../../../common/routing/route';
 import { getQuery } from '../../../../queries/project';
 import Loader from '../../../common/loader/loader';
@@ -11,13 +17,19 @@ import { Page, PageProps, PageState } from '../../../common/page';
 const css = require('./index.module.scss');
 
 const { Sider, Content } = Layout;
-const LoadableProjectDashboardPage = React.lazy(() => import('./dashboard/index'));
-const LoadableProjectDataPage = React.lazy(() => import('./data/index'));
-const LoadableProjectScriptsPage = React.lazy(() => import('./scripts/index'));
-const LoadableProjectSettingsPage = React.lazy(() => import('./settings/index'));
+const LoadableProjectDashboardPage = React.lazy(
+    () => import('./dashboard/index') as any,
+);
+const LoadableProjectDataPage = React.lazy(() => import('./data/index') as any);
+const LoadableProjectScriptsPage = React.lazy(
+    () => import('./scripts/index') as any,
+);
+const LoadableProjectSettingsPage = React.lazy(
+    () => import('./settings/index') as any,
+);
 
 interface ProjectQueryResult {
-    project: {
+    output: {
         name: string;
     };
 }
@@ -41,7 +53,9 @@ export default class ProjectPage extends Page<Params, Props, State> {
             collapsed: false,
         });
 
-        this.__handleMenuCollapseChange = this.__handleMenuCollapseChange.bind(this);
+        this.__handleMenuCollapseChange = this.__handleMenuCollapseChange.bind(
+            this,
+        );
         this.__routes = [
             {
                 path: `${props.match.url}/dashboard`,
@@ -90,28 +104,27 @@ export default class ProjectPage extends Page<Params, Props, State> {
 
         return (
             <Layout className={css.layout}>
-                <Sider
-                    collapsible
-                    onCollapse={this.__handleMenuCollapseChange}
-                >
+                <Sider collapsible onCollapse={this.__handleMenuCollapseChange}>
                     <Icon type="caret-left" />
                     <Menu
                         theme="dark"
                         className={css.menu}
                         selectedKeys={[selected]}
                     >
-                        {this.__routes.map((config: RouteConfig, idx: number) => {
-                            const key = idx.toString();
+                        {this.__routes.map(
+                            (config: RouteConfig, idx: number) => {
+                                const key = idx.toString();
 
-                            return (
-                                <Menu.Item key={key}>
-                                    <Link to={config.path}>
-                                        <Icon type={config.icon} />
-                                        {showText ? config.label : null}
-                                    </Link>
-                                </Menu.Item>
-                            );
-                        })}
+                                return (
+                                    <Menu.Item key={key}>
+                                        <Link to={config.path}>
+                                            <Icon type={config.icon} />
+                                            {showText ? config.label : null}
+                                        </Link>
+                                    </Menu.Item>
+                                );
+                            },
+                        )}
                     </Menu>
                     <Menu theme="dark" className={css.bottomMenu}>
                         <Menu.Item>
@@ -126,9 +139,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
                     </Query>
                     <Content className={css.content}>
                         <Row>
-                            <Col lg={24}>
-                                {this.__renderRoutes()}
-                            </Col>
+                            <Col lg={24}>{this.__renderRoutes()}</Col>
                         </Row>
                     </Content>
                 </Layout>
@@ -139,7 +150,9 @@ export default class ProjectPage extends Page<Params, Props, State> {
     private __currentTabKey(): string {
         const { location } = this.props;
 
-        const found = this.__routes.findIndex(i => startsWith(location.pathname, i.path));
+        const found = this.__routes.findIndex(i =>
+            startsWith(location.pathname, i.path),
+        );
 
         return found ? found.toString() : '0';
     }
@@ -148,11 +161,12 @@ export default class ProjectPage extends Page<Params, Props, State> {
         const props = this.props;
 
         const BreadcrumbsItem = ({ match }: RouteComponentProps) => {
-            let title = this.__routeNames[match.url] || (match.params as any).path;
+            let title =
+                this.__routeNames[match.url] || (match.params as any).path;
             let item;
 
-            if (props.match.params.id === title && data && data.project) {
-                title = data.project.name;
+            if (props.match.params.id === title && data && data.output) {
+                title = data.output.name;
             }
 
             if (match.isExact) {
@@ -164,7 +178,10 @@ export default class ProjectPage extends Page<Params, Props, State> {
             return (
                 <>
                     <Breadcrumb.Item>{item}</Breadcrumb.Item>
-                    <Route path={`${match.url}/:path`} component={BreadcrumbsItem} />
+                    <Route
+                        path={`${match.url}/:path`}
+                        component={BreadcrumbsItem}
+                    />
                 </>
             );
         };
@@ -190,7 +207,9 @@ export default class ProjectPage extends Page<Params, Props, State> {
                 <Switch>
                     {redirect}
                     {this.__routes.map((config: RouteConfig) => {
-                        const Component: React.SFC<any> = config.component as any;
+                        const Component: React.SFC<
+                            any
+                        > = config.component as any;
                         const projectId = this.getParam('id');
 
                         return (
@@ -198,7 +217,12 @@ export default class ProjectPage extends Page<Params, Props, State> {
                                 key={config.path}
                                 path={config.path}
                                 component={(props: any) => {
-                                    return <Component {...props} project={projectId} />;
+                                    return (
+                                        <Component
+                                            {...props}
+                                            project={projectId}
+                                        />
+                                    );
                                 }}
                             />
                         );

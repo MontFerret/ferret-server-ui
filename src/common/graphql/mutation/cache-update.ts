@@ -11,17 +11,20 @@ export function updateFormCache(
     cache: DataProxy,
     mutationResult: FetchResult<MutationResultData>,
 ): void {
-    const q = cache.readQuery<any>({ query, variables });
-    const current = q[key] as object;
-    const metadata = mutationResult.data ? mutationResult.data.metadata : {};
-    const next = { ...current, ...metadata, ...values };
+    // not new item
+    if (values.id != null) {
+        const q = cache.readQuery<any>({ query, variables });
+        const current = q[key] as object;
+        const metadata = mutationResult.data ? mutationResult.data.output : {};
+        const next = { ...current, ...metadata, ...values };
 
-    cache.writeQuery<any>({
-        query,
-        data: {
-            [key]: next,
-        },
-    });
+        cache.writeQuery<any>({
+            query,
+            data: {
+                [key]: next,
+            },
+        });
+    }
 }
 
 export function createFormCacheUpdator(
@@ -34,6 +37,13 @@ export function createFormCacheUpdator(
         cache: DataProxy,
         mutationResult: FetchResult<MutationResultData>,
     ) => {
-        return updateFormCache(key, query, variables, values, cache, mutationResult);
+        return updateFormCache(
+            key,
+            query,
+            variables,
+            values,
+            cache,
+            mutationResult,
+        );
     };
 }

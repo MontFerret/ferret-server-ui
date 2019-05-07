@@ -1,7 +1,7 @@
 import partial from 'lodash/partial';
 import React from 'react';
+import { SearchResult } from '../../../../../common/graphql/query/result';
 import { LoadMoreHandler } from '../../../../../common/models/query/loader';
-import { Pagination } from '../../../../../common/models/query/pagination';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
 import { LinkToDetails } from '../../../../common/link/details';
 import { Column, DataTable } from '../../../../common/table/table';
@@ -9,8 +9,7 @@ import { Column, DataTable } from '../../../../common/table/table';
 export interface Props {
     baseUrl: string;
     loading: boolean;
-    data?: ScriptOutput[];
-    pagination: Pagination;
+    result?: SearchResult<ScriptOutput>;
     loadMore: LoadMoreHandler;
     onCreate: () => void;
 }
@@ -53,22 +52,16 @@ export default class ScriptsTable extends React.Component<Props> {
     }
 
     public render(): any {
-        const {
-            data,
-            loading,
-            loadMore,
-            pagination,
-            onCreate,
-        } = this.props;
+        const { result, loading, loadMore, onCreate } = this.props;
 
         return (
             <DataTable
                 title="Scripts"
                 columns={this.__columns}
-                data={data}
+                data={result ? result.data : undefined}
                 loading={loading}
                 loadMore={loadMore}
-                pagination={pagination}
+                pagination={result ? result.paging : undefined}
                 onCreate={onCreate}
             />
         );

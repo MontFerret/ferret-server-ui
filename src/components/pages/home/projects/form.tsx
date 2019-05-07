@@ -7,7 +7,9 @@ import { ProjectCreate } from '../../../../models/api/model/projectCreate';
 
 const { TextArea } = Input;
 
-export interface Props extends FormComponentProps {
+interface InnerProps extends Props, FormComponentProps {}
+
+export interface Props {
     visible: boolean;
     loading: boolean;
     error?: string;
@@ -15,8 +17,8 @@ export interface Props extends FormComponentProps {
     onCancel: () => void;
 }
 
-class NewProjectForm extends React.Component<Props> {
-    constructor(props: Props) {
+class NewProjectForm extends React.Component<InnerProps> {
+    constructor(props: InnerProps) {
         super(props);
 
         this.__handleOkClick = this.__handleOkClick.bind(this);
@@ -24,12 +26,7 @@ class NewProjectForm extends React.Component<Props> {
     }
 
     public render(): any {
-        const {
-            visible,
-            loading,
-            form,
-            error,
-        } = this.props;
+        const { visible, loading, form, error } = this.props;
 
         const { getFieldDecorator } = form;
         // const isValid = every(getFieldsError(), isEmpty);
@@ -46,11 +43,9 @@ class NewProjectForm extends React.Component<Props> {
                 cancelButtonDisabled={loading}
             >
                 <Spin spinning={loading}>
-                    { error ? <Alert message={error} type="error" /> : null}
+                    {error ? <Alert message={error} type="error" /> : null}
                     <Form>
-                        <Form.Item
-                            label="Name"
-                        >
+                        <Form.Item label="Name">
                             {getFieldDecorator('name', {
                                 rules: [
                                     {
@@ -60,7 +55,8 @@ class NewProjectForm extends React.Component<Props> {
                                     {
                                         required: true,
                                         message: 'Please input project name!',
-                                    }],
+                                    },
+                                ],
                             })(
                                 <Input
                                     disabled={loading}
@@ -68,14 +64,14 @@ class NewProjectForm extends React.Component<Props> {
                                 />,
                             )}
                         </Form.Item>
-                        <Form.Item
-                            label="Description"
-                        >
+                        <Form.Item label="Description">
                             {getFieldDecorator('description', {
-                                rules: [{
-                                    min: 10,
-                                    max: 255,
-                                }],
+                                rules: [
+                                    {
+                                        min: 10,
+                                        max: 255,
+                                    },
+                                ],
                             })(
                                 <TextArea
                                     disabled={loading}
@@ -107,4 +103,6 @@ class NewProjectForm extends React.Component<Props> {
     }
 }
 
-export default Form.create({ name: 'new_project_form' })(NewProjectForm);
+export default (Form.create({ name: 'new_project_form' })(
+    NewProjectForm,
+) as any) as React.SFC<Props>;

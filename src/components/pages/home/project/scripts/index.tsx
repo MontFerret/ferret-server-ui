@@ -2,8 +2,10 @@ import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Page, PageProps } from '../../../../common/page';
 
-const LoadableScriptsListPage = React.lazy(() => import('./scripts'));
-const LoadableScriptDetailsPage = React.lazy(() => import('./script/index'));
+const LoadableScriptsListPage = React.lazy(() => import('./scripts') as any);
+const LoadableScriptDetailsPage = React.lazy(
+    () => import('./script/index') as any,
+);
 
 export type Params = never;
 export interface Props extends PageProps<Params> {
@@ -24,9 +26,19 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         return (
             <Fragment>
                 <Switch>
-                    <Route path={match.path} component={this.__renderScriptsList} exact />
-                    <Route path={`${match.path}/new`} component={this.__renderScriptDetails} />
-                    <Route path={`${match.path}/:id`} component={this.__renderScriptDetails} />
+                    <Route
+                        path={match.path}
+                        component={this.__renderScriptsList}
+                        exact
+                    />
+                    <Route
+                        path={`${match.path}/new`}
+                        component={this.__renderScriptDetails}
+                    />
+                    <Route
+                        path={`${match.path}/:id`}
+                        component={this.__renderScriptDetails}
+                    />
                 </Switch>
             </Fragment>
         );
@@ -34,13 +46,19 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
     private __renderScriptsList(props: any): any {
         return (
-            <LoadableScriptsListPage {...props} projectId={this.props.project} />
+            <LoadableScriptsListPage
+                {...props}
+                projectId={this.props.project}
+            />
         );
     }
 
     private __renderScriptDetails(props: any): any {
         return (
-            <LoadableScriptDetailsPage {...props} projectId={this.props.project} />
+            <LoadableScriptDetailsPage
+                {...props}
+                projectId={this.props.project}
+            />
         );
     }
 }
