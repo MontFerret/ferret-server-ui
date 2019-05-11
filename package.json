@@ -17,7 +17,7 @@
         "apollo-link-rest": "^0.7.3",
         "classnames": "^2.2.6",
         "date-fns": "^1.30.1",
-        "graphql": "^14.2.1",
+        "graphql": "^14.3.0",
         "graphql-anywhere": "^4.2.1",
         "graphql-tag": "^2.10.1",
         "history": "^4.9.0",
@@ -29,7 +29,7 @@
         "react-router": "^5.0.0",
         "react-router-breadcrumbs-hoc": "^3.2.0",
         "react-router-dom": "^5.0.0",
-        "react-transition-group": "^4.0.0"
+        "react-transition-group": "^4.0.1"
     },
     "devDependencies": {
         "@openapitools/openapi-generator-cli": "^0.0.8-4.0.0-beta2",
@@ -38,11 +38,11 @@
         "@types/jest": "24.0.11",
         "@types/lodash": "^4.14.123",
         "@types/node": "11.11.5",
-        "@types/qs": "^6.5.2",
-        "@types/react": "16.8.16",
+        "@types/qs": "^6.5.3",
+        "@types/react": "16.8.17",
         "@types/react-dom": "16.8.4",
-        "@types/react-router": "^4.4.5",
-        "@types/react-router-dom": "^4.3.2",
+        "@types/react-router": "^5.0.0",
+        "@types/react-router-dom": "^4.3.3",
         "@types/react-transition-group": "^2.9.1",
         "http-proxy-middleware": "^0.19.1",
         "husky": "^2.2.0",
