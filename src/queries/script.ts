@@ -63,10 +63,23 @@ export const deleteMutation = gql`
         output(projectId: $projectId, id: $id)
             @rest(
                 method: "DELETE"
-                path: "projects/{args.projectId}/scripts/{args.id}"
+                path: "/projects/{args.projectId}/scripts/{args.id}"
             ) {
             id
             rev
+        }
+    }
+`;
+
+export const runMutation = gql`
+    mutation runScriptMutation(
+        $projectId: String!
+        $id: String!
+        $input: ExecutionInput!
+    ) {
+        output(projectId: $projectId, id: $id, input: $input)
+            @rest(method: "POST", path: "/projects/{args.projectId}/exec") {
+            jobId
         }
     }
 `;

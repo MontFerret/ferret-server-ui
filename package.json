@@ -9,13 +9,14 @@
         "test": "react-scripts test"
     },
     "dependencies": {
-        "antd": "^3.16.6",
+        "antd": "^3.17.0",
         "apollo-cache-inmemory": "^1.5.1",
         "apollo-client": "^2.5.1",
         "apollo-link": "^1.2.11",
         "apollo-link-context": "^1.0.17",
         "apollo-link-rest": "^0.7.3",
         "classnames": "^2.2.6",
+        "date-fns": "^1.30.1",
         "graphql": "^14.2.1",
         "graphql-anywhere": "^4.2.1",
         "graphql-tag": "^2.10.1",

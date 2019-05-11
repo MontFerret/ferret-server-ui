@@ -17,16 +17,11 @@ import { Page, PageProps, PageState } from '../../../common/page';
 const css = require('./index.module.scss');
 
 const { Sider, Content } = Layout;
-const LoadableProjectDashboardPage = React.lazy(
-    () => import('./dashboard/index') as any,
-);
-const LoadableProjectDataPage = React.lazy(() => import('./data/index') as any);
-const LoadableProjectScriptsPage = React.lazy(
-    () => import('./scripts/index') as any,
-);
-const LoadableProjectSettingsPage = React.lazy(
-    () => import('./settings/index') as any,
-);
+const DashboardPage = React.lazy(() => import('./dashboard/index') as any);
+const DataPage = React.lazy(() => import('./data/index') as any);
+const ScriptsPage = React.lazy(() => import('./scripts/index') as any);
+const SettingsPage = React.lazy(() => import('./settings/index') as any);
+const ExecutionPage = React.lazy(() => import('./execution/index') as any);
 
 interface ProjectQueryResult {
     output: {
@@ -61,25 +56,31 @@ export default class ProjectPage extends Page<Params, Props, State> {
                 path: `${props.match.url}/dashboard`,
                 label: 'Dasboard',
                 icon: 'dashboard',
-                component: LoadableProjectDashboardPage,
+                component: DashboardPage,
             },
             {
                 path: `${props.match.url}/scripts`,
                 label: 'Scripts',
                 icon: 'file',
-                component: LoadableProjectScriptsPage,
+                component: ScriptsPage,
+            },
+            {
+                path: `${props.match.url}/exec`,
+                label: 'Execution',
+                icon: 'rocket',
+                component: ExecutionPage,
             },
             {
                 path: `${props.match.url}/data`,
                 label: 'Data',
                 icon: 'database',
-                component: LoadableProjectDataPage,
+                component: DataPage,
             },
             {
                 path: `${props.match.url}/settings`,
                 label: 'Settings',
                 icon: 'setting',
-                component: LoadableProjectSettingsPage,
+                component: SettingsPage,
             },
         ];
         this.__routeNames = {
@@ -87,6 +88,7 @@ export default class ProjectPage extends Page<Params, Props, State> {
             [props.match.url]: props.match.params.id,
             [`${props.match.url}/dashboard`]: 'Dasboard',
             [`${props.match.url}/scripts`]: 'Scripts',
+            [`${props.match.url}/exec`]: 'Execution',
             [`${props.match.url}/data`]: 'Data',
             [`${props.match.url}/settings`]: 'Settings',
         };
