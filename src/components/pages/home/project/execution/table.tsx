@@ -30,14 +30,24 @@ export default class QueueTable extends React.Component<Props> {
                 title: 'Script ID',
             },
             {
+                dataIndex: 'cause',
+                key: 'cause',
+                title: 'Caused by',
+            },
+            {
                 dataIndex: 'status',
                 key: 'status',
                 title: 'Status',
             },
             {
-                dataIndex: 'cause',
-                key: 'cause',
-                title: 'Caused by',
+                dataIndex: 'startedAt',
+                key: 'startedAt',
+                title: 'Started',
+            },
+            {
+                dataIndex: 'endedAt',
+                key: 'endedAt',
+                title: 'Ended',
             },
         ];
     }

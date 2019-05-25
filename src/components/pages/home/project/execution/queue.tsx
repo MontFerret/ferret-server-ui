@@ -15,9 +15,12 @@ export interface Props extends PageProps<Params> {
 }
 
 export default class ExecutionQueuePage extends Page<Params, Props> {
+    private __isPolling: boolean;
+
     constructor(props: Props) {
         super(props);
 
+        this.__isPolling = false;
         this.__loadMoreScripts = this.__loadMoreScripts.bind(this);
         this.__renderList = this.__renderList.bind(this);
         this.__handleError = this.__handleError.bind(this);
@@ -50,6 +53,8 @@ export default class ExecutionQueuePage extends Page<Params, Props> {
         const loading = qr.loading;
         const result = qr.data ? qr.data.output : undefined;
 
+        this.__startOrStopPolling(qr);
+
         return (
             <Table
                 baseUrl={this.props.location.pathname}
@@ -58,6 +63,36 @@ export default class ExecutionQueuePage extends Page<Params, Props> {
                 loadMore={this.__loadMoreScripts}
             />
         );
+    }
+
+    private __startOrStopPolling(
+        qr: QueryResult<QueryResultDataList<ExecutionOutput>>,
+    ): void {
+        const result = qr.data ? qr.data.output : undefined;
+
+        if (result == null) {
+            if (this.__isPolling) {
+                qr.stopPolling();
+            }
+
+            return;
+        }
+
+        const hasActive = result.data.some(i => i.status === 'running');
+
+        if (hasActive) {
+            if (!this.__isPolling) {
+                this.__isPolling = true;
+                qr.startPolling(1000);
+            }
+
+            return;
+        }
+
+        if (this.__isPolling) {
+            this.__isPolling = false;
+            qr.stopPolling();
+        }
     }
 
     private __loadMoreScripts(q: UrlQuery): any {
