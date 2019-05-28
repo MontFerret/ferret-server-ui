@@ -6,7 +6,7 @@ import { Entity } from '../../../common/models/entity';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { fromString } from '../../../common/models/query/order';
 import { Pagination } from '../../../common/models/query/pagination';
-import PageHeader from '../page-header/page-header';
+import { PageHeader } from '../page-header/page-header';
 import { Pagination as Pager } from '../pagination/pagination';
 
 const css = require('./table.module.scss');
@@ -68,6 +68,9 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
 
     public render(): any {
         const { columns, data, loading, pagination, title } = this.props;
+        const { onCreate, onClone, onDelete } = this.props;
+        const showSelection =
+            onCreate != null || onClone != null || onDelete != null;
 
         return (
             <Card>
@@ -79,7 +82,9 @@ export class DataTable extends React.PureComponent<Props<any>, State> {
                     dataSource={data}
                     pagination={false}
                     loading={loading}
-                    rowSelection={this.__handleRowSelection}
+                    rowSelection={
+                        showSelection ? this.__handleRowSelection : undefined
+                    }
                     onChange={this.__handleTableChange}
                 />
                 <Pager

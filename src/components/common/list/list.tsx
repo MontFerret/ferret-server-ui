@@ -4,7 +4,7 @@ import cn from 'classnames';
 import React from 'react';
 import { LoadMoreHandler } from '../../../common/models/query/loader';
 import { Pagination } from '../../../common/models/query/pagination';
-import PageHeader from '../page-header/page-header';
+import { PageHeader } from '../page-header/page-header';
 import { Pagination as Pager } from '../pagination/pagination';
 const css = require('./list.module.scss');
 

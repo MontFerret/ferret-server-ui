@@ -1,5 +1,9 @@
 {
-    "extends": ["tslint:recommended", "tslint-config-airbnb"],
+    "extends": [
+        "tslint:recommended",
+        "tslint-config-airbnb",
+        "tslint-config-prettier"
+    ],
     "rules": {
         "no-var-requires": false,
         "function-name": false,

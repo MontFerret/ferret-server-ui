@@ -1,4 +1,4 @@
-import { Card, Form, Spin, notification } from 'antd';
+import { Form, Spin, notification } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { DataProxy } from 'apollo-cache';
 import { ApolloError } from 'apollo-client';
@@ -17,8 +17,8 @@ import { updateFormCache } from '../../../common/graphql/mutation/cache-update';
 import { MutationResultData } from '../../../common/graphql/mutation/result';
 import { QueryResultData } from '../../../common/graphql/query/result';
 import { Entity } from '../../../models/api/model/entity';
+import { FormCard } from './card';
 import Panel from './panel';
-const css = require('./form.module.scss');
 
 export interface FormContext<T extends Entity> extends FormComponentProps {
     value?: T;
@@ -191,7 +191,7 @@ class FormContainer<T extends Entity = any> extends React.Component<
 
                         if (idx === 0) {
                             return (
-                                <Card key={key} className={css.section}>
+                                <FormCard key={key}>
                                     <Panel
                                         title={titleStr}
                                         touched={touched}
@@ -202,15 +202,11 @@ class FormContainer<T extends Entity = any> extends React.Component<
                                         onDelete={handleDelete}
                                     />
                                     {child}
-                                </Card>
+                                </FormCard>
                             );
                         }
 
-                        return (
-                            <Card key={key} className={css.section}>
-                                {child}
-                            </Card>
-                        );
+                        return <FormCard key={key}>{child}</FormCard>;
                     })}
                 </Form>
             </Spin>

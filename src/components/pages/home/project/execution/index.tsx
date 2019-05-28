@@ -2,7 +2,8 @@ import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Page, PageProps } from '../../../../common/page';
 
-const LoadableQueueListPage = React.lazy(() => import('./queue') as any);
+const QueueListPage = React.lazy(() => import('./queue') as any);
+const DetailsPage = React.lazy(() => import('./job/index') as any);
 
 export type Params = never;
 export interface Props extends PageProps<Params> {
@@ -14,6 +15,7 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         super(props);
 
         this.__renderList = this.__renderList.bind(this);
+        this.__renderDetails = this.__renderDetails.bind(this);
     }
 
     public render(): any {
@@ -27,14 +29,20 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                         component={this.__renderList}
                         exact
                     />
+                    <Route
+                        path={`${match.path}/:id`}
+                        component={this.__renderDetails}
+                    />
                 </Switch>
             </Fragment>
         );
     }
 
     private __renderList(props: any): any {
-        return (
-            <LoadableQueueListPage {...props} projectId={this.props.project} />
-        );
+        return <QueueListPage {...props} projectId={this.props.project} />;
+    }
+
+    private __renderDetails(props: any): any {
+        return <DetailsPage {...props} projectId={this.props.project} />;
     }
 }

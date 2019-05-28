@@ -11,11 +11,11 @@ import {
 import { QueryResultDataList } from '../.../../../../../../common/graphql/query/result';
 import { Entity } from '../../../../../common/models/entity';
 import { Query as UrlQuery } from '../../../../../common/models/query/query';
+import { ExecutionInput } from '../../../../../models/api/model/executionInput';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
 import { findQuery, runMutation } from '../../../../../queries/script';
 import { Page, PageProps } from '../../../../common/page';
 import Table from './table';
-import { ExecutionInput } from '../../../../../models/api/model/executionInput';
 
 interface MutationVariables {
     projectId: string;

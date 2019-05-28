@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import React from 'react';
-import PageHeader from '../page-header/page-header';
+import { PageHeader } from '../page-header/page-header';
 
 const css = require('./panel.module.scss');
 
@@ -29,13 +29,7 @@ export default class FormPanel extends React.PureComponent<Props> {
     }
 
     private __renderButtons(): any {
-        const {
-            onCancel,
-            onSave,
-            onDelete,
-            touched,
-            valid,
-        } = this.props;
+        const { onCancel, onSave, onDelete, touched, valid } = this.props;
 
         const buttons = [];
 
@@ -63,7 +57,7 @@ export default class FormPanel extends React.PureComponent<Props> {
                     disabled={!touched || !valid}
                     onClick={onSave}
                 >
-                Save
+                    Save
                 </Button>,
             );
         }
