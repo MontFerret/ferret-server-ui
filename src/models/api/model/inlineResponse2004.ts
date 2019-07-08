@@ -9,11 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { DataOutput } from './dataOutput';
+import { SearchResult } from './searchResult';
 
-/**
- * The properties that are allowed when creating or updating a Execution.
- */
-export interface ExecutionInput {
-    scriptId: string;
-    params?: { [key: string]: any };
+export interface InlineResponse2004 {
+    data?: DataOutput[];
+    searchResult?: SearchResult;
 }

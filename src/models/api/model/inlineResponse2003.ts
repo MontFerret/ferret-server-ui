@@ -9,10 +9,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { DataOutput } from './dataOutput';
-import { SearchResult } from './searchResult';
 
 export interface InlineResponse2003 {
-    data?: DataOutput[];
-    searchResult?: SearchResult;
+    jobId: string;
 }

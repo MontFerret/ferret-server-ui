@@ -1,4 +1,3 @@
-import { Entity } from '../../../models/api/model/entity';
 import { Pagination } from '../../models/query/pagination';
 
 export interface SearchResult<T> {
@@ -6,10 +5,10 @@ export interface SearchResult<T> {
     readonly data: T[];
 }
 
-export interface QueryResultDataList<T extends Entity> {
+export interface QueryResultDataList<T> {
     readonly output: SearchResult<T>;
 }
 
-export interface QueryResultData<T extends Entity> {
+export interface QueryResultData<T> {
     readonly output: T;
 }

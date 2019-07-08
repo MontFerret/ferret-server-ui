@@ -1,10 +1,14 @@
+import { Button } from 'antd';
 import partial from 'lodash/partial';
 import React from 'react';
 import { SearchResult } from '../../../../../common/graphql/query/result';
+import { Entity } from '../../../../../common/models/entity';
 import { LoadMoreHandler } from '../../../../../common/models/query/loader';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
 import { LinkToDetails } from '../../../../common/link/details';
 import { Column, DataTable } from '../../../../common/table/table';
+import { DateTime } from '../../../../common/date-time/date-time';
+import { Link } from 'react-router-dom';
 
 export interface Props {
     baseUrl: string;
@@ -12,6 +16,7 @@ export interface Props {
     result?: SearchResult<ScriptOutput>;
     loadMore: LoadMoreHandler;
     onCreate: () => void;
+    onRun: (entity: Entity) => void;
 }
 
 export default class ScriptsTable extends React.Component<Props> {
@@ -21,7 +26,26 @@ export default class ScriptsTable extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        const baseUrl = props.baseUrl;
+        const onRun = props.onRun;
         const ToDetails = partial(LinkToDetails, props.baseUrl);
+        const RunButton = (_: string, entity: Entity) => {
+            return (
+                <Button
+                    type="link"
+                    icon="right-circle"
+                    shape="circle"
+                    onClick={partial(onRun, entity)}
+                />
+            );
+        };
+        const TimeStamp = (value: string, entity: Entity) => {
+            return (
+                <Link to={`${baseUrl}/${entity.id}`}>
+                    <DateTime value={value} />
+                </Link>
+            );
+        };
 
         this.__columns = [
             {
@@ -40,13 +64,19 @@ export default class ScriptsTable extends React.Component<Props> {
                 dataIndex: 'createdAt',
                 key: 'createdAt',
                 title: 'Created',
-                render: ToDetails,
+                render: TimeStamp,
             },
             {
                 dataIndex: 'updatedAt',
                 key: 'updatedAt',
                 title: 'Updated',
-                render: ToDetails,
+                render: TimeStamp,
+            },
+            {
+                dataIndex: '',
+                key: '$run',
+                title: 'Run',
+                render: RunButton,
             },
         ];
     }

@@ -1,12 +1,30 @@
 import { notification } from 'antd';
+import { ApolloError } from 'apollo-client';
 import React from 'react';
-import { Query, QueryResult } from 'react-apollo';
+import {
+    Mutation,
+    MutationFunc,
+    MutationResult,
+    Query,
+    QueryResult,
+} from 'react-apollo';
 import { QueryResultDataList } from '../.../../../../../../common/graphql/query/result';
+import { Entity } from '../../../../../common/models/entity';
 import { Query as UrlQuery } from '../../../../../common/models/query/query';
+import { ExecutionInput } from '../../../../../models/api/model/executionInput';
 import { ScriptOutput } from '../../../../../models/api/model/scriptOutput';
-import { findQuery } from '../../../../../queries/script';
+import { findQuery, runMutation } from '../../../../../queries/script';
 import { Page, PageProps } from '../../../../common/page';
 import Table from './table';
+
+interface MutationVariables {
+    projectId: string;
+    input: ExecutionInput;
+}
+
+interface MutationResultData {
+    jobId: string;
+}
 
 export type Params = never;
 export interface Props extends PageProps<Params> {
@@ -18,8 +36,10 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
         super(props);
 
         this.__loadMoreScripts = this.__loadMoreScripts.bind(this);
-        this.__renderScripts = this.__renderScripts.bind(this);
+        this.__renderList = this.__renderList.bind(this);
         this.__handleCreate = this.__handleCreate.bind(this);
+        this.__handleRun = this.__handleRun.bind(this);
+        this.__handleError = this.__handleError.bind(this);
     }
 
     public render(): any {
@@ -34,31 +54,45 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
                 query={findQuery}
                 variables={variables}
                 fetchPolicy={'network-only'}
+                onError={this.__handleError}
             >
-                {this.__renderScripts}
+                {(query: QueryResult<QueryResultDataList<ScriptOutput>>) => {
+                    return (
+                        <Mutation
+                            mutation={runMutation}
+                            variables={variables}
+                            // onCompleted={this.__handleCompletedMutation}
+                            onError={this.__handleError}
+                        >
+                            {(
+                                fn: MutationFunc,
+                                mr: MutationResult<MutationResultData>,
+                            ) => {
+                                return this.__renderList(query, fn, mr);
+                            }}
+                        </Mutation>
+                    );
+                }}
             </Query>
         );
     }
 
-    private __renderScripts({
-        data,
-        loading,
-        error,
-    }: QueryResult<QueryResultDataList<ScriptOutput>>): any {
-        if (error != null) {
-            notification.error({
-                message: error.message,
-                type: 'error',
-            });
-        }
+    private __renderList(
+        qr: QueryResult<QueryResultDataList<ScriptOutput>>,
+        mutate: MutationFunc,
+        mr: MutationResult<MutationResultData>,
+    ): any {
+        const loading = qr.loading || mr.loading;
+        const result = qr.data ? qr.data.output : undefined;
 
         return (
             <Table
                 baseUrl={this.props.location.pathname}
-                result={data ? data.output : undefined}
+                result={result}
                 loading={loading}
                 loadMore={this.__loadMoreScripts}
                 onCreate={this.__handleCreate}
+                onRun={this.__handleRun.bind(this, mutate)}
             />
         );
     }
@@ -69,5 +103,25 @@ export default class ProjectScriptsPage extends Page<Params, Props> {
 
     private __handleCreate(): void {
         this.navigate(`${this.props.match.path}/new`);
+    }
+
+    private __handleRun(
+        mutate: MutationFunc<any, MutationVariables>,
+        entity: Entity,
+    ): void {
+        mutate({
+            variables: {
+                projectId: this.props.projectId,
+                input: {
+                    scriptId: entity.id,
+                },
+            },
+        });
+    }
+
+    private __handleError(error: ApolloError): void {
+        notification.error({
+            message: error.message,
+        });
     }
 }
